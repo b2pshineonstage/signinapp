@@ -2248,6 +2248,8 @@ async function autoPopulateFromMasterSheet() {
     await persist();
     renderAdminSchools();
     toast(`✓ Loaded ${cfg.schools.length} schools from Master Sheet`, "success");
+    // Force re-render of admin view so all fields show imported values
+    showView("admin");
     
   } catch (error) {
     console.error("Error fetching master sheet:", error);
