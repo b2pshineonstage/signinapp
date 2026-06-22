@@ -6,7 +6,7 @@
 <title>Shine on Stage Sign In/Out</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="manifest" href="/manifest.json">
+<link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -2101,6 +2101,9 @@ function addSchool() {
 }
 
 function removeSchool(id) {
+  var sc = cfg.schools.find(function(s){return s.id===id;});
+  if (!sc) return;
+  if (!confirm("Remove " + sc.name + "?\n\nThis cannot be undone.")) return;
   cfg.schools = cfg.schools.filter(function(s){return s.id!==id;});
   renderAdminSchools();
 }
