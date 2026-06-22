@@ -1044,7 +1044,10 @@ function renderHome() {
     var cls = "school-card" + (allOut ? " fully-out" : (st.cIn > 0 || st.aIn > 0 ? " has-people" : ""));
     var townLine = s.town ? "<div class=\"school-town-line\">" + esc(s.town) + "</div>" : "";
     var pills = "";
-    if (!arrived) pills = "<span class=\"pill pill-default\">Not yet arrived</span>";
+    if (!arrived) {
+      pills = "<span class=\"pill pill-default\">Not yet arrived</span>";
+      if (s.arrivalTime) pills += "<span class=\"pill pill-default\" style=\"color:var(--text-3)\">⏱ " + esc(s.arrivalTime) + "</span>";
+    }
     else {
       pills += "<span class=\"pill pill-gold\">" + st.cIn + " children in</span>";
       pills += "<span class=\"pill pill-gold\">" + st.aIn + " adults in</span>";
@@ -2072,6 +2075,7 @@ function renderAdminSchools() {
       "</div>" +
       // Item 16: Chaperone names
       "<div class=\"field-group\"><label class=\"field-label\">Chaperone Names <span class=\"field-label-opt\">(optional, comma-separated)</span></label><input class=\"field-input\" data-sid=\"" + s.id + "\" data-f=\"chaperoneNames\" value=\"" + esc(s.chaperoneNames||"") + "\" placeholder=\"e.g. Jane Smith, David Jones\" style=\"padding:9px 12px;font-size:14px\"></div>" +
+      "<div class=\"field-group\"><label class=\"field-label\">Arrival Time <span class=\"field-label-opt\">(optional, 24hr e.g. 14:25)</span></label><input class=\"field-input\" data-sid=\"" + s.id + "\" data-f=\"arrivalTime\" value=\"" + esc(s.arrivalTime||"") + "\" placeholder=\"e.g. 14:25\" style=\"padding:9px 12px;font-size:14px\"></div>" +
     "</div>";
   }).join("");
 }
@@ -2197,7 +2201,7 @@ async function autoPopulateFromMasterSheet() {
       cfg.locationNames = locationNames.split(',').map(s => s.trim()).filter(s => s);
     }
     
-    // Parse school data (starting from row 6, index 5)
+    // Parse school data (starting from row 5, index 4)
     cfg.schools = [];
     let nextId = 1;
     
@@ -2213,6 +2217,7 @@ async function autoPopulateFromMasterSheet() {
       const performers = parseInt(row[5]) || 0;
       const chaperones = parseInt(row[6]) || 0;
       const chaperoneNames = row.length > 7 && row[7] ? String(row[7]).trim() : "";
+      const arrivalTime = row.length > 8 && row[8] ? String(row[8]).trim() : "";
       
       if (!name) continue;
       
@@ -2224,7 +2229,8 @@ async function autoPopulateFromMasterSheet() {
         town: town || null,
         performers: performers || null,
         chaperones: chaperones || null,
-        chaperoneNames: chaperoneNames || null
+        chaperoneNames: chaperoneNames || null,
+        arrivalTime: arrivalTime || null
       });
     }
     
