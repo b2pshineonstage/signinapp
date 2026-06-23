@@ -617,7 +617,9 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
 
 <!-- SESSION DECLARATION MODAL -->
 <div id="declModal" class="decl-modal">
-  <div class="decl-card">
+  <div class="decl-card" style="position:relative">
+    <!-- X cancel button top right -->
+    <button onclick="cancelDeclaration()" style="position:absolute;top:12px;right:12px;background:none;border:none;color:var(--text-3);font-size:22px;cursor:pointer;line-height:1;padding:4px 8px">&times;</button>
     <div class="decl-title" id="declSchoolName"></div>
     
     <!-- Gate view (shown first) -->
@@ -629,9 +631,10 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
       <div style="font-size:14px;color:var(--text-2);text-align:center;margin-bottom:20px">Is this correct for today?</div>
       <button class="decl-btn" onclick="proceedWithExpected()">Yes, continue to sign in</button>
       <button class="decl-btn" style="background:var(--surface-2);color:var(--text-2);margin-top:8px" onclick="showAdjustNumbers()">No, adjust numbers</button>
-      <button class="decl-btn" style="background:rgba(96,165,250,0.15);color:#60A5FA;border:1px solid rgba(96,165,250,0.4);margin-top:8px" onclick="viewRosterFromDecl()">👥 View Roster</button>
-      <button class="decl-btn" style="background:transparent;color:var(--text-3);margin-top:8px;border:1px solid var(--border-2)" onclick="cancelDeclaration()">Cancel</button>
-      <div style="font-size:12px;color:var(--text-3);text-align:center;margin-top:14px;font-style:italic">(You can add details about absences or extras during sign-in)</div>
+      <div style="text-align:center;margin-top:16px">
+        <button onclick="viewRosterFromDecl()" style="background:none;border:none;color:var(--text-3);font-size:13px;cursor:pointer;text-decoration:underline">👥 View roster first</button>
+      </div>
+      <div style="font-size:12px;color:var(--text-3);text-align:center;margin-top:10px;font-style:italic">(You can add details about absences or extras during sign-in)</div>
     </div>
     
     <!-- Adjust view (shown if they tap "No, adjust") -->
@@ -1224,6 +1227,12 @@ function proceedWithExpected() {
   states[curSid].declaredC = sc.performers || 0;
   states[curSid].declaredA = sc.chaperones || 0;
   
+  // Update number fields with declared amounts
+  nC = states[curSid].declaredC;
+  nA = states[curSid].declaredA;
+  document.getElementById("nC").textContent = nC;
+  document.getElementById("nA").textContent = nA;
+  
   document.getElementById("declModal").classList.remove("show");
   updateStatus();
   setType("in");
@@ -1256,6 +1265,12 @@ function confirmDeclaration() {
   if (states[curSid].expectedA === null) states[curSid].expectedA = sc.chaperones || null;
   
   document.getElementById("declModal").classList.remove("show");
+  
+  // Update number fields with declared amounts
+  nC = states[curSid].declaredC;
+  nA = states[curSid].declaredA;
+  document.getElementById("nC").textContent = nC;
+  document.getElementById("nA").textContent = nA;
   
   // Check for extra children discrepancy
   var st = states[curSid];
