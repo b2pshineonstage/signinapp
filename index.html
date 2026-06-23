@@ -1657,7 +1657,16 @@ function setType(t) {
     names.forEach(function(name) { if (!chaperoneState[name]) chaperoneState[name] = {checked:false,note:""}; });
     extraAdults = 0;
     chapSec.innerHTML = "<span class=\"chap-label\">Named chaperones <span style=\"font-weight:400;color:var(--text-3);text-transform:none;letter-spacing:0\">(tick to confirm present \u2014 updates adult count)</span></span><div id=\"chapList\">" + renderChaperoneList(sc) + "</div>";
-    nA = 0; document.getElementById("nA").textContent = 0;
+    // If declared adults matches named chaperones count, pre-tick all and set nA
+    var st = states[curSid] || blank();
+    if (st.declaredA !== null && st.declaredA === names.length) {
+      names.forEach(function(name) { chaperoneState[name] = {checked:true,note:""}; });
+      nA = st.declaredA;
+    } else {
+      nA = 0;
+    }
+    document.getElementById("nA").textContent = nA;
+    if (document.getElementById("chapList")) document.getElementById("chapList").innerHTML = renderChaperoneList(sc);
   } else {
     document.getElementById("chapSection").style.display = "none";
     document.getElementById("chapSection").innerHTML = "";
