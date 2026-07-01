@@ -1668,7 +1668,7 @@ function setType(t) {
       names.forEach(function(name) { chaperoneState[name] = {checked:true,note:""}; });
       nA = st.declaredA;
     } else {
-      nA = 0;
+      nA = st.declaredA !== null ? st.declaredA : 0;
     }
     document.getElementById("nA").textContent = nA;
     if (document.getElementById("chapList")) document.getElementById("chapList").innerHTML = renderChaperoneList(sc);
