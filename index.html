@@ -71,6 +71,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:17
 .header-sub-row{display:flex;align-items:center;gap:6px}
 .header-sub{font-size:12px;font-weight:500;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sync-dot{width:7px;height:7px;border-radius:50%;background:var(--text-3);flex-shrink:0;transition:background 0.3s}
+.build-tag{font-size:10px;color:var(--text-3);opacity:0.6;white-space:nowrap;flex-shrink:0;font-family:monospace;align-self:center}
 .sync-dot.ok{background:var(--green)}
 .sync-dot.err{background:var(--red)}
 .sync-dot.syncing{background:var(--accent);animation:pulse 1s ease-in-out infinite}
@@ -393,6 +394,7 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
   <div class="schools-list" id="schoolsList"></div>
   <div class="bottom-bar">
     <button class="btn btn-secondary btn-icon" onclick="showView('admin')">&#9881;&#65039;</button>
+    <span class="build-tag" id="buildTag"></span>
     <div style="flex:1"></div>
   </div>
 </div>
@@ -743,6 +745,9 @@ let states = {};
 let txLog  = [];
 let queue  = [];
 let stateVersion = 0;
+// Bump this string every time a new build is deployed, so the on-screen
+// tag lets you instantly confirm you're not looking at a stale cached copy.
+const BUILD_VERSION = "v10.4 \u2013 2026-07-01 15:40";
 let curSid = null, curType = null, nC = 0, nA = 0;
 let isWriting = false;
 let visRefreshInProgress = false;
@@ -1009,6 +1014,8 @@ async function startApp() {
 //  INIT
 // =============================================================
 function init() {
+  var bt = document.getElementById("buildTag");
+  if (bt) bt.textContent = BUILD_VERSION;
   startApp();
   setInterval(function() { smartRefresh(); }, 5000);
   document.addEventListener("visibilitychange", async function() {
