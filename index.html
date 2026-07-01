@@ -212,8 +212,8 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
 /* v10: LOCATION CHIPS */
 .loc-strip{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:14px}
 .loc-strip-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent);flex-shrink:0}
-.loc-chip{border-radius:22px;padding:5px 13px;font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;border:2px solid var(--border-2);background:var(--surface-2);color:var(--text-2);-webkit-tap-highlight-color:transparent}
-.loc-chip.active{background:var(--accent-bg);border-color:var(--accent-bdr);color:var(--accent)}
+.loc-chip{border-radius:22px;padding:6px 14px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;border:2px solid var(--border-2);background:var(--surface-2);color:var(--text-2);-webkit-tap-highlight-color:transparent}
+.loc-chip.active{background:var(--accent);border-color:var(--accent);color:#000;}
 .loc-chip.unset{border-color:var(--amber-bdr);color:var(--amber)}
 
 /* v10: TWO-PARTY SIGN-IN — processed-by label */
@@ -335,7 +335,7 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
 .co-count{font-size:15px;font-weight:600;text-align:center;color:rgba(255,255,255,0.75);position:relative;z-index:1}
 
 /* TOAST */
-.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--surface-2);border:1px solid var(--border-2);border-radius:30px;padding:11px 22px;font-size:15px;font-weight:600;color:var(--text);z-index:999;opacity:0;transition:all 0.2s;white-space:nowrap;pointer-events:none;max-width:92vw;text-align:center}
+.toast{position:fixed;bottom:130px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--surface-2);border:1px solid var(--border-2);border-radius:30px;padding:11px 22px;font-size:15px;font-weight:600;color:var(--text);z-index:999;opacity:0;transition:all 0.2s;white-space:nowrap;pointer-events:none;max-width:92vw;text-align:center}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .toast.ok{background:var(--green-bg);border-color:var(--green-bdr);color:var(--green)}
 .toast.err{background:var(--red-bg);border-color:var(--red-bdr);color:var(--red)}
@@ -801,6 +801,11 @@ function loadLocal() {
   try {
     const v = localStorage.getItem(LS_STATES);
     if (v) { const p = JSON.parse(v); if (isValidStates(p)) states = p; else ok = false; }
+    // Sanitise all state values to integers to prevent string concatenation bugs
+    Object.values(states).forEach(function(st) {
+      var intFields = ['cIn','aIn','tempC','tempA','totCIn','totAIn','totCOut','totAOut'];
+      intFields.forEach(function(f) { st[f] = parseInt(st[f]) || 0; });
+    });
   } catch(e) { console.error("states parse failed:", e); ok = false; }
   try {
     const v = localStorage.getItem(LS_TX);
@@ -1187,8 +1192,8 @@ function showDeclarationModal() {
   var sc = cfg.schools.find(function(s) { return s.id === curSid; });
   if (!sc) return;
   
-  var expectedC = sc.performers || 0;
-  var expectedA = sc.chaperones || 0;
+  var expectedC = parseInt(sc.performers) || 0;
+  var expectedA = parseInt(sc.chaperones) || 0;
   
   document.getElementById("declSchoolName").textContent = sc.name;
   
@@ -1224,8 +1229,8 @@ function proceedWithExpected() {
   
   // Use expected numbers as declared
   if (!states[curSid]) states[curSid] = blank();
-  states[curSid].declaredC = sc.performers || 0;
-  states[curSid].declaredA = sc.chaperones || 0;
+  states[curSid].declaredC = parseInt(sc.performers) || 0;
+  states[curSid].declaredA = parseInt(sc.chaperones) || 0;
   
   // Update number fields with declared amounts
   nC = states[curSid].declaredC;
@@ -1261,8 +1266,8 @@ function confirmDeclaration() {
   
   // Store expected numbers if not already set (for discrepancy tracking)
   var sc = cfg.schools.find(function(s) { return s.id === curSid; });
-  if (states[curSid].expectedC === null) states[curSid].expectedC = sc.performers || null;
-  if (states[curSid].expectedA === null) states[curSid].expectedA = sc.chaperones || null;
+  if (states[curSid].expectedC === null) states[curSid].expectedC = parseInt(sc.performers) || null;
+  if (states[curSid].expectedA === null) states[curSid].expectedA = parseInt(sc.chaperones) || null;
   
   document.getElementById("declModal").classList.remove("show");
   
@@ -1330,8 +1335,8 @@ function renderStatLine(sc, st) {
   var tempNote = st.tempC > 0 ? " (" + st.tempC + " temp out)" : "";
   
   // Use declared numbers if set, otherwise fall back to config
-  var expectedC = st.declaredC !== null ? st.declaredC : (sc.performers || null);
-  var expectedA = st.declaredA !== null ? st.declaredA : (sc.chaperones || null);
+  var expectedC = st.declaredC !== null ? st.declaredC : (parseInt(sc.performers) || null);
+  var expectedA = st.declaredA !== null ? st.declaredA : (parseInt(sc.chaperones) || null);
   
   // Calculate discrepancy
   var hasDiscrepancy = false;
@@ -1677,8 +1682,8 @@ function setType(t) {
 }
 
 function adj(f, d) {
-  if (f === "c") { nC = Math.max(0, nC + d); document.getElementById("nC").textContent = nC; }
-  else           { nA = Math.max(0, nA + d); document.getElementById("nA").textContent = nA; }
+  if (f === "c") { nC = Math.max(0, (parseInt(nC) || 0) + d); document.getElementById("nC").textContent = nC; }
+  else           { nA = Math.max(0, (parseInt(nA) || 0) + d); document.getElementById("nA").textContent = nA; }
   // Brighten details below when numbers entered
   var container = document.getElementById("actionDetailsContainer");
   if (container && (nC > 0 || nA > 0)) {
@@ -1721,6 +1726,12 @@ function doConfirm() {
   document.getElementById("mTitle").textContent = lbls[curType];
   document.getElementById("mBody").textContent  = nC + " children + " + nA + " adults \u2014 " + sc.name + (notes ? "\nNote: " + notes : "");
 
+  // Always restore Cancel + Confirm — defensive reset in case any prior
+  // modal use (e.g. accidental roster tap) left a different button in place
+  document.querySelector(".modal-actions").innerHTML =
+    "<button class=\"btn btn-secondary\" style=\"flex:1\" onclick=\"closeModal()\">Cancel</button>" +
+    "<button class=\"btn btn-primary\" style=\"flex:1\" onclick=\"execAction()\">Confirm</button>";
+
   // Item 15: Staff name display
   var staffEl = document.getElementById("mStaff");
   if (by) {
@@ -1741,7 +1752,11 @@ function changeStaff() {
 }
 
 function closeModal() { 
-  document.getElementById("modal").classList.remove("active"); 
+  document.getElementById("modal").classList.remove("active");
+  // Restore original Cancel + Confirm buttons in case roster view replaced them
+  document.querySelector(".modal-actions").innerHTML = 
+    "<button class=\"btn btn-secondary\" style=\"flex:1\" onclick=\"closeModal()\">Cancel</button>" +
+    "<button class=\"btn btn-primary\" style=\"flex:1\" onclick=\"execAction()\">Confirm</button>";
   document.querySelector(".modal-actions").style.display = ""; 
 }
 
@@ -1749,6 +1764,12 @@ async function execAction() {
   if (isWriting) { toast("Please wait...", "info"); return; }
   closeModal();
   isWriting = true;
+  // Force integers to prevent string concatenation bugs
+  nC = parseInt(nC) || 0;
+  nA = parseInt(nA) || 0;
+  // Disable confirm button to prevent double-tap
+  var confirmBtn = document.getElementById("confirmBtn");
+  if (confirmBtn) confirmBtn.disabled = true;
   try {
     var sc    = cfg.schools.find(function(s) { return s.id === curSid; });
     var st    = states[curSid] || blank();
@@ -1777,10 +1798,10 @@ async function execAction() {
       signedBy:by, processedBy:activeStaffName || "", notes:notes,
       deviceLocation:activeDeviceLocation || ""
     };
-    if (curType === "in")     { st.cIn += nC; st.aIn += nA; st.totCIn += nC; st.totAIn += nA; }
-    if (curType === "out")    { st.cIn -= nC; st.aIn -= nA; st.totCOut += nC; st.totAOut += nA; }
-    if (curType === "temp")   { st.cIn -= nC; st.aIn -= nA; st.tempC += nC; st.tempA += nA; }
-    if (curType === "return") { st.cIn += nC; st.aIn += nA; st.tempC -= nC; st.tempA -= nA; }
+    if (curType === "in")     { st.cIn = (parseInt(st.cIn)||0) + nC; st.aIn = (parseInt(st.aIn)||0) + nA; st.totCIn = (parseInt(st.totCIn)||0) + nC; st.totAIn = (parseInt(st.totAIn)||0) + nA; }
+    if (curType === "out")    { st.cIn = (parseInt(st.cIn)||0) - nC; st.aIn = (parseInt(st.aIn)||0) - nA; st.totCOut = (parseInt(st.totCOut)||0) + nC; st.totAOut = (parseInt(st.totAOut)||0) + nA; }
+    if (curType === "temp")   { st.cIn = (parseInt(st.cIn)||0) - nC; st.aIn = (parseInt(st.aIn)||0) - nA; st.tempC = (parseInt(st.tempC)||0) + nC; st.tempA = (parseInt(st.tempA)||0) + nA; }
+    if (curType === "return") { st.cIn = (parseInt(st.cIn)||0) + nC; st.aIn = (parseInt(st.aIn)||0) + nA; st.tempC = (parseInt(st.tempC)||0) - nC; st.tempA = (parseInt(st.tempA)||0) - nA; }
     states[curSid] = st;
     txLog.push(tx);
     await persist();
@@ -1789,6 +1810,8 @@ async function execAction() {
     showConfirmOverlay(curType, sc.name, nC, nA);
   } finally {
     isWriting = false;
+    var confirmBtn = document.getElementById("confirmBtn");
+    if (confirmBtn) confirmBtn.disabled = false;
   }
 }
 
@@ -1844,6 +1867,8 @@ function adjAmend(f, d) {
 
 async function doAmendConfirm() {
   if (isWriting) { toast("Please wait...", "info"); return; }
+  var btn = document.querySelector("[onclick='doAmendConfirm()']");
+  if (btn) btn.disabled = true;
   var reason = document.getElementById("amendReason").value.trim();
   if (!reason) { toast("A reason is required for amendments", "err"); return; }
   var st = states[curSid] || blank();
@@ -1875,6 +1900,8 @@ async function doAmendConfirm() {
     showConfirmOverlay("amend", sc.name, amendC, amendA);
   } finally {
     isWriting = false;
+    var btn = document.querySelector("[onclick='doAmendConfirm()']");
+    if (btn) btn.disabled = false;
   }
 }
 
@@ -2226,9 +2253,23 @@ async function autoPopulateFromMasterSheet() {
     
     // Parse Emergency Register Sheet ID from C2 (row index 1, column index 2)
     const emergencyRegisterSheetId = rows.length > 1 && rows[1].length > 2 ? String(rows[1][2]).trim() : null;
-    
-    // Parse Staff Names from E2 (row index 1, column index 4)
-    const staffNames = rows.length > 1 && rows[1].length > 4 ? String(rows[1][4]).trim() : "";
+
+    // Parse Event Name from D2 (row index 1, column index 3)
+    const eventName = rows.length > 1 && rows[1].length > 3 ? String(rows[1][3]).trim() : "";
+    if (eventName) {
+      cfg.eventName = eventName;
+      document.getElementById("aeName").value = eventName;
+    }
+
+    // Parse Event Sub (location · date) from E2 (row index 1, column index 4)
+    const eventSub = rows.length > 1 && rows[1].length > 4 ? String(rows[1][4]).trim() : "";
+    if (eventSub) {
+      cfg.eventSub = eventSub;
+      document.getElementById("aeSub").value = eventSub;
+    }
+
+    // Parse Staff Names from F2 (row index 1, column index 5)
+    const staffNames = rows.length > 1 && rows[1].length > 5 ? String(rows[1][5]).trim() : "";
     if (staffNames) {
       cfg.staffNames = staffNames.split(',').map(s => s.trim()).filter(s => s);
     }
@@ -2368,7 +2409,7 @@ async function saveAdmin() {
     var id = parseInt(inp.dataset.sid), f = inp.dataset.f;
     var sc = cfg.schools.find(function(s){return s.id===id;});
     if (!sc) return;
-    sc[f] = f==="performers" ? (inp.value?parseInt(inp.value):null) : inp.value;
+    sc[f] = (f==="performers"||f==="chaperones") ? (inp.value?parseInt(inp.value):null) : inp.value;
   });
   await persist();
   setSyncDot("idle");
@@ -2441,7 +2482,15 @@ async function saveToDrive() {
   var stillIn = cfg.schools.filter(function(s){var st=states[s.id]||blank();return st.cIn>0||st.aIn>0||st.tempC>0;});
   if (stillIn.length > 0) {
     var el = document.getElementById("overrideReason");
-    if (!el || !el.value.trim()) { showView("report"); toast("Enter a reason in the red box first","err"); return; }
+    if (!el || !el.value.trim()) {
+      showView("report");
+      setTimeout(function() {
+        var ov = document.getElementById("rOverride");
+        if (ov) ov.scrollIntoView({behavior:"smooth", block:"center"});
+      }, 100);
+      toast("Enter a reason in the red box first","err");
+      return;
+    }
     var orTx = {id:Date.now(),ts:new Date().toISOString(),schoolId:0,schoolName:"OVERRIDE NOTE",type:"override",c:0,a:0,signedBy:"",notes:el.value.trim()};
     txLog.push(orTx); await persist();
     gasPost({action:"log",ts:orTx.ts,schoolName:"OVERRIDE NOTE",type:"override",c:0,a:0,notes:orTx.notes});
@@ -2644,6 +2693,27 @@ function toast(msg, type) {
 // =============================================================
 //  ENTRY POINT
 // =============================================================
+// -------------------------------------------------------------
+// iOS keyboard fix: fixed bottom bars (Confirm/Cancel etc.) can end
+// up rendered underneath the on-screen keyboard on iOS Safari /
+// home-screen PWAs, because position:fixed elements don't reliably
+// track the visual viewport when the keyboard opens. This nudges
+// every .bottom-bar up by the keyboard's height while it's open,
+// and puts it back to bottom:0 once the keyboard closes.
+// -------------------------------------------------------------
+function adjustBottomBarsForKeyboard() {
+  if (!window.visualViewport) return;
+  var vv = window.visualViewport;
+  var offset = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+  document.querySelectorAll(".bottom-bar").forEach(function(bar) {
+    bar.style.bottom = offset > 1 ? offset + "px" : "";
+  });
+}
+if (window.visualViewport) {
+  window.visualViewport.addEventListener("resize", adjustBottomBarsForKeyboard);
+  window.visualViewport.addEventListener("scroll", adjustBottomBarsForKeyboard);
+}
+
 init();
 
 </script>
