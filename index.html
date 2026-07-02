@@ -747,7 +747,7 @@ let queue  = [];
 let stateVersion = 0;
 // Bump this string every time a new build is deployed, so the on-screen
 // tag lets you instantly confirm you're not looking at a stale cached copy.
-const BUILD_VERSION = "v10.7 \u2013 2026-07-01 16:50";
+const BUILD_VERSION = "v10.8 \u2013 2026-07-01 17:05";
 let returnToExtraChildPrompt = false;
 let pendingSignInConfirm = false;
 let curSid = null, curType = null, nC = 0, nA = 0;
@@ -1693,8 +1693,6 @@ function saveChildDetails() {
     pendingSignInConfirm = false;
     setTimeout(function() { doConfirm(); }, 50);
   }
-}
-  toast("Details saved - follow up with school for complete information", "success");
 }
 
 function updateStatus() {
