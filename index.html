@@ -747,9 +747,10 @@ let queue  = [];
 let stateVersion = 0;
 // Bump this string every time a new build is deployed, so the on-screen
 // tag lets you instantly confirm you're not looking at a stale cached copy.
-const BUILD_VERSION = "v10.8 \u2013 2026-07-01 17:05";
+const BUILD_VERSION = "v10.9 \u2013 2026-07-01 17:25";
 let returnToExtraChildPrompt = false;
 let pendingSignInConfirm = false;
+let editingChildIndex = null;
 let curSid = null, curType = null, nC = 0, nA = 0;
 let isWriting = false;
 let visRefreshInProgress = false;
@@ -1550,11 +1551,11 @@ function updateDiscrepancyDetails() {
   
   // Show extra children list if any
   if (st.extraChildren && st.extraChildren.length > 0) {
-    html += "<div style='margin-top:12px;margin-bottom:8px;font-weight:600'>Registered Extra Children:</div>";
-    st.extraChildren.forEach(function(child) {
-      html += "<div class='extra-child-item'>";
-      html += "<strong>" + esc(child.name) + "</strong>";
-      html += "Emergency: " + esc(child.phone);
+    html += "<div style='margin-top:12px;margin-bottom:8px;font-weight:600'>Registered Extra Children <span style='font-weight:400;font-size:12px;color:var(--text-3)'>(tap to edit)</span>:</div>";
+    st.extraChildren.forEach(function(child, idx) {
+      html += "<div class='extra-child-item' style='cursor:pointer' onclick='editExtraChild(" + idx + ")'>";
+      html += "<strong>" + esc(child.name) + "</strong> \u270f\ufe0f";
+      html += "<br>Emergency: " + esc(child.phone);
       if (child.medical) html += "<br>Medical: " + esc(child.medical);
       html += "</div>";
     });
@@ -1570,6 +1571,7 @@ function updateDiscrepancyDetails() {
 }
 
 function showAddChildForm() {
+  editingChildIndex = null;
   document.getElementById("childName").value = "";
   document.getElementById("childPhone").value = "";
   document.getElementById("childMedical").value = "";
@@ -1579,8 +1581,30 @@ function showAddChildForm() {
   document.getElementById("addChildModal").classList.add("show");
 }
 
+// Reopen the add-child form pre-filled with an already-registered child's
+// details, so information that arrives later (e.g. medical form handed in
+// after sign-in) can actually be added rather than being stuck forever.
+function editExtraChild(idx) {
+  if (!curSid || !states[curSid] || !states[curSid].extraChildren) return;
+  var child = states[curSid].extraChildren[idx];
+  if (!child) return;
+  editingChildIndex = idx;
+  document.getElementById("childName").value = (child.name === "Name not provided") ? "" : child.name;
+  document.getElementById("childPhone").value = (child.phone === "Contact not provided") ? "" : child.phone;
+  document.getElementById("childMedical").value = child.medical || "";
+  var title = document.getElementById("addChildModalTitle");
+  if (title) title.textContent = "Edit Child Details";
+  document.getElementById("addChildModal").classList.add("show");
+}
+
 function closeAddChildModal() {
   document.getElementById("addChildModal").classList.remove("show");
+  // If we were editing an existing entry, there's nothing to defer —
+  // just close, no sign-in was waiting on this.
+  if (editingChildIndex !== null) {
+    editingChildIndex = null;
+    return;
+  }
   // "Skip for now" on this form — defer whatever's still outstanding rather
   // than silently forgetting it, and resume the sign-in if one was waiting.
   if (curSid && states[curSid]) {
@@ -1661,6 +1685,24 @@ function saveChildDetails() {
   
   if (!states[curSid]) states[curSid] = blank();
   if (!states[curSid].extraChildren) states[curSid].extraChildren = [];
+
+  // Editing an already-registered child (e.g. medical details arriving
+  // later) — update that entry in place and stop, no looping/deferral.
+  if (editingChildIndex !== null) {
+    states[curSid].extraChildren[editingChildIndex] = {
+      name: name || "Name not provided",
+      phone: phone || "Contact not provided",
+      medical: medical || ""
+    };
+    editingChildIndex = null;
+    saveLocal();
+    if (document.getElementById("discrepDetails").style.display !== "none") {
+      updateDiscrepancyDetails();
+    }
+    document.getElementById("addChildModal").classList.remove("show");
+    toast("Details updated", "success");
+    return;
+  }
   
   states[curSid].extraChildren.push({
     name: name || "Name not provided",
