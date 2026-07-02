@@ -747,7 +747,7 @@ let queue  = [];
 let stateVersion = 0;
 // Bump this string every time a new build is deployed, so the on-screen
 // tag lets you instantly confirm you're not looking at a stale cached copy.
-const BUILD_VERSION = "v10.9 \u2013 2026-07-01 17:25";
+const BUILD_VERSION = "v10.10 \u2013 2026-07-01 17:45";
 let returnToExtraChildPrompt = false;
 let pendingSignInConfirm = false;
 let editingChildIndex = null;
@@ -1304,7 +1304,11 @@ function confirmDeclaration() {
 // combining both ways this can arise (declared more than expected, or
 // actually signed in more than declared) and subtracting anything already
 // registered or explicitly deferred by staff via "I'll Do This Later".
-function extraChildrenStillNeeded() {
+// Raw count of children still needing registration, ignoring any deferral.
+// Used for the pulsing reminder icon — deferring lets sign-in proceed, but
+// it should NOT make the reminder disappear; only actually adding the
+// details should do that.
+function extraChildrenRawUnregistered() {
   if (!curSid) return 0;
   var st = states[curSid] || blank();
   var alreadyRegistered = st.extraChildren ? st.extraChildren.length : 0;
@@ -1312,10 +1316,18 @@ function extraChildrenStillNeeded() {
     ? (st.declaredC - st.expectedC) : 0;
   var fromActualSignIn = (st.declaredC !== null)
     ? (((parseInt(st.cIn) || 0) + (parseInt(nC) || 0)) - st.declaredC) : 0;
-  var needed = Math.max(fromDeclaration, fromActualSignIn, 0) - alreadyRegistered;
+  return Math.max(fromDeclaration, fromActualSignIn, 0) - alreadyRegistered;
+}
+
+// Deferred-adjusted count — this is what actually gates whether sign-in
+// confirmation is blocked. Deferring reduces this to 0 (or the remaining
+// gap if it's grown since), even though the raw count above stays visible.
+function extraChildrenStillNeeded() {
+  if (!curSid) return 0;
+  var st = states[curSid] || blank();
+  var needed = extraChildrenRawUnregistered();
   var deferred = st.extraChildrenDeferred || 0;
-  needed = Math.max(needed - deferred, 0);
-  return needed;
+  return Math.max(needed - deferred, 0);
 }
 
 function showExtraChildPrompt(count) {
@@ -1391,15 +1403,10 @@ function renderStatLine(sc, st) {
     if (st.declaredA !== st.expectedA) hasDiscrepancy = true;
   }
   
-  // Check if there are unregistered extra children
-  if (st.expectedC !== null && st.declaredC !== null) {
-    var extraChildren = st.declaredC - st.expectedC;
-    if (extraChildren > 0) {
-      var registeredCount = (st.extraChildren || []).length;
-      if (registeredCount < extraChildren) {
-        hasUnregisteredChildren = true;
-      }
-    }
+  // Check if there are unregistered extra children (covers both being
+  // declared above expected, and actually signed in above declared)
+  if (extraChildrenRawUnregistered() > 0) {
+    hasUnregisteredChildren = true;
   }
   
   var alertClass = hasUnregisteredChildren ? "has-alert" : "";
@@ -1562,7 +1569,7 @@ function updateDiscrepancyDetails() {
   }
   
   // Show add button if there are unregistered extra children
-  var unregistered = discrepC - (st.extraChildren ? st.extraChildren.length : 0);
+  var unregistered = extraChildrenRawUnregistered();
   if (unregistered > 0) {
     html += "<button class='btn-add-child' onclick='showAddChildForm()'>+ Add Child Details (" + unregistered + " remaining)</button>";
   }
