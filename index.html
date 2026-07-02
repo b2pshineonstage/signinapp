@@ -680,22 +680,22 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
 <!-- Add Child Details Modal -->
 <div id="addChildModal" class="decl-modal">
   <div class="decl-card">
-    <div class="decl-title">Extra Child Details</div>
+    <div class="decl-title" id="addChildModalTitle">Extra Child Details</div>
     <div class="decl-subtitle" style="margin-bottom:16px">Add any information you have now. You can follow up with the school later for complete details.</div>
     
     <div class="decl-field">
-      <label class="decl-label">Child's full name</label>
-      <input type="text" class="decl-input" id="childName" placeholder="Enter if known" onfocus="if(this.value===this.placeholder)this.value=''">
+      <label class="decl-label">🧒 Child's full name</label>
+      <input type="text" class="decl-input" id="childName" placeholder="">
     </div>
     
     <div class="decl-field">
-      <label class="decl-label">Emergency contact number</label>
-      <input type="tel" class="decl-input" id="childPhone" placeholder="07XXX XXXXXX" onfocus="if(this.value===this.placeholder)this.value=''">
+      <label class="decl-label">📞 Emergency contact number</label>
+      <input type="tel" class="decl-input" id="childPhone" placeholder="">
     </div>
     
     <div class="decl-field">
-      <label class="decl-label">Medical conditions <span style="font-weight:400;font-size:12px">(allergies, asthma, etc.)</span></label>
-      <textarea class="decl-input" id="childMedical" placeholder="Any conditions we need to be aware of..." style="min-height:60px;resize:vertical;font-family:inherit" onfocus="if(this.value===this.placeholder)this.value=''"></textarea>
+      <label class="decl-label">🏥 Medical conditions <span style="font-weight:400;font-size:12px">(allergies, asthma, etc.)</span></label>
+      <textarea class="decl-input" id="childMedical" placeholder="" style="min-height:60px;resize:vertical;font-family:inherit"></textarea>
     </div>
     
     <button class="decl-btn" onclick="saveChildDetails()">Save Details</button>
@@ -747,8 +747,9 @@ let queue  = [];
 let stateVersion = 0;
 // Bump this string every time a new build is deployed, so the on-screen
 // tag lets you instantly confirm you're not looking at a stale cached copy.
-const BUILD_VERSION = "v10.6 \u2013 2026-07-01 16:20";
+const BUILD_VERSION = "v10.7 \u2013 2026-07-01 16:50";
 let returnToExtraChildPrompt = false;
+let pendingSignInConfirm = false;
 let curSid = null, curType = null, nC = 0, nA = 0;
 let isWriting = false;
 let visRefreshInProgress = false;
@@ -1286,8 +1287,7 @@ function confirmDeclaration() {
   document.getElementById("nA").textContent = nA;
   
   // Check for extra children discrepancy
-  var st = states[curSid];
-  var extraChildren = (st.declaredC || 0) - (st.expectedC || 0);
+  var extraChildren = extraChildrenStillNeeded();
   
   if (extraChildren > 0) {
     // Show extra child prompt
@@ -1297,6 +1297,24 @@ function confirmDeclaration() {
     updateStatus();
     setType("in");
   }
+}
+
+// Works out how many extra children still need an emergency-register entry,
+// combining both ways this can arise (declared more than expected, or
+// actually signed in more than declared) and subtracting anything already
+// registered or explicitly deferred by staff via "I'll Do This Later".
+function extraChildrenStillNeeded() {
+  if (!curSid) return 0;
+  var st = states[curSid] || blank();
+  var alreadyRegistered = st.extraChildren ? st.extraChildren.length : 0;
+  var fromDeclaration = (st.declaredC !== null && st.expectedC !== null)
+    ? (st.declaredC - st.expectedC) : 0;
+  var fromActualSignIn = (st.declaredC !== null)
+    ? (((parseInt(st.cIn) || 0) + (parseInt(nC) || 0)) - st.declaredC) : 0;
+  var needed = Math.max(fromDeclaration, fromActualSignIn, 0) - alreadyRegistered;
+  var deferred = st.extraChildrenDeferred || 0;
+  needed = Math.max(needed - deferred, 0);
+  return needed;
 }
 
 function showExtraChildPrompt(count) {
@@ -1312,8 +1330,22 @@ function showExtraChildPrompt(count) {
 
 function closeExtraChildPrompt() {
   document.getElementById("extraChildPrompt").classList.remove("show");
+  // Record what's being deferred so this doesn't immediately re-block the
+  // same sign-in in a loop. A pulsing warning icon still reminds staff.
+  if (curSid && states[curSid]) {
+    var st = states[curSid];
+    var alreadyRegistered = st.extraChildren ? st.extraChildren.length : 0;
+    var fromDeclaration = (st.declaredC !== null && st.expectedC !== null) ? (st.declaredC - st.expectedC) : 0;
+    var fromActualSignIn = (st.declaredC !== null) ? (((parseInt(st.cIn)||0) + (parseInt(nC)||0)) - st.declaredC) : 0;
+    var totalNeeded = Math.max(fromDeclaration, fromActualSignIn, 0) - alreadyRegistered;
+    if (totalNeeded > (st.extraChildrenDeferred || 0)) st.extraChildrenDeferred = totalNeeded;
+  }
   updateStatus();
   setType("in");
+  if (pendingSignInConfirm) {
+    pendingSignInConfirm = false;
+    setTimeout(function() { doConfirm(); }, 50);
+  }
 }
 
 function addChildFromPrompt() {
@@ -1541,11 +1573,26 @@ function showAddChildForm() {
   document.getElementById("childName").value = "";
   document.getElementById("childPhone").value = "";
   document.getElementById("childMedical").value = "";
+  var needed = extraChildrenStillNeeded();
+  var title = document.getElementById("addChildModalTitle");
+  if (title) title.textContent = needed > 1 ? ("Extra Child Details (1 of " + needed + ")") : "Extra Child Details";
   document.getElementById("addChildModal").classList.add("show");
 }
 
 function closeAddChildModal() {
   document.getElementById("addChildModal").classList.remove("show");
+  // "Skip for now" on this form — defer whatever's still outstanding rather
+  // than silently forgetting it, and resume the sign-in if one was waiting.
+  if (curSid && states[curSid]) {
+    var stillNeeded = extraChildrenStillNeeded();
+    if (stillNeeded > (states[curSid].extraChildrenDeferred || 0)) {
+      states[curSid].extraChildrenDeferred = stillNeeded;
+    }
+  }
+  if (pendingSignInConfirm) {
+    pendingSignInConfirm = false;
+    setTimeout(function() { doConfirm(); }, 50);
+  }
 }
 
 function showRoster() {
@@ -1622,10 +1669,31 @@ function saveChildDetails() {
   });
   
   saveLocal();
-  closeAddChildModal();
   if (document.getElementById("discrepDetails").style.display !== "none") {
     updateDiscrepancyDetails();
   }
+
+  var stillNeeded = extraChildrenStillNeeded();
+  if (stillNeeded > 0) {
+    // More children still need details — clear the form and stay open
+    // rather than closing after only the first one.
+    document.getElementById("childName").value = "";
+    document.getElementById("childPhone").value = "";
+    document.getElementById("childMedical").value = "";
+    var title = document.getElementById("addChildModalTitle");
+    var doneCount = states[curSid].extraChildren.length;
+    if (title) title.textContent = "Extra Child Details (" + (doneCount + 1) + " of " + (doneCount + stillNeeded) + ")";
+    toast("Saved \u2014 " + stillNeeded + " more to add", "success");
+    return;
+  }
+
+  document.getElementById("addChildModal").classList.remove("show");
+  toast("Details saved - follow up with school for complete information", "success");
+  if (pendingSignInConfirm) {
+    pendingSignInConfirm = false;
+    setTimeout(function() { doConfirm(); }, 50);
+  }
+}
   toast("Details saved - follow up with school for complete information", "success");
 }
 
@@ -1732,10 +1800,9 @@ function doConfirm() {
   // here than was originally agreed). Without this, extra children get
   // counted in the total but never get an emergency-register entry.
   if (curType === "in" && st.declaredC !== null) {
-    var alreadyRegistered = st.extraChildren ? st.extraChildren.length : 0;
-    var totalAfter = (parseInt(st.cIn) || 0) + nC;
-    var stillUnaccounted = totalAfter - st.declaredC - alreadyRegistered;
+    var stillUnaccounted = extraChildrenStillNeeded();
     if (stillUnaccounted > 0) {
+      pendingSignInConfirm = true;
       showExtraChildPrompt(stillUnaccounted);
       return;
     }
@@ -1785,10 +1852,12 @@ function closeModal() {
   // rather than silently dropping it and leaving the details unrecorded.
   if (returnToExtraChildPrompt) {
     returnToExtraChildPrompt = false;
-    var st = states[curSid] || blank();
-    var extraChildren = (st.declaredC || 0) - (st.expectedC || 0);
-    if (extraChildren > 0) {
-      setTimeout(function() { showExtraChildPrompt(extraChildren); }, 50);
+    var stillNeeded = extraChildrenStillNeeded();
+    if (stillNeeded > 0) {
+      setTimeout(function() { showExtraChildPrompt(stillNeeded); }, 50);
+    } else if (pendingSignInConfirm) {
+      pendingSignInConfirm = false;
+      setTimeout(function() { doConfirm(); }, 50);
     }
   }
 }
