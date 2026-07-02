@@ -747,7 +747,8 @@ let queue  = [];
 let stateVersion = 0;
 // Bump this string every time a new build is deployed, so the on-screen
 // tag lets you instantly confirm you're not looking at a stale cached copy.
-const BUILD_VERSION = "v10.4 \u2013 2026-07-01 15:40";
+const BUILD_VERSION = "v10.6 \u2013 2026-07-01 16:20";
+let returnToExtraChildPrompt = false;
 let curSid = null, curType = null, nC = 0, nA = 0;
 let isWriting = false;
 let visRefreshInProgress = false;
@@ -1327,6 +1328,7 @@ function addChildFromPrompt() {
 
 function viewRosterFromPrompt() {
   document.getElementById("extraChildPrompt").classList.remove("show");
+  returnToExtraChildPrompt = true;
   updateStatus();
   setType("in");
   // Small delay to ensure action modal is visible, then show roster
@@ -1725,6 +1727,20 @@ function doConfirm() {
   if (curType === "temp"   && nC > st.cIn)  { toast("Only " + st.cIn  + " children inside",   "err"); return; }
   if (curType === "return" && nC > st.tempC) { toast("Only " + st.tempC + " children temp out", "err"); return; }
 
+  // Catch children being signed in beyond what was declared, even if that
+  // wasn't apparent at declaration time (e.g. staff enters a higher number
+  // here than was originally agreed). Without this, extra children get
+  // counted in the total but never get an emergency-register entry.
+  if (curType === "in" && st.declaredC !== null) {
+    var alreadyRegistered = st.extraChildren ? st.extraChildren.length : 0;
+    var totalAfter = (parseInt(st.cIn) || 0) + nC;
+    var stillUnaccounted = totalAfter - st.declaredC - alreadyRegistered;
+    if (stillUnaccounted > 0) {
+      showExtraChildPrompt(stillUnaccounted);
+      return;
+    }
+  }
+
   var sc    = cfg.schools.find(function(s) { return s.id === curSid; });
   var lbls  = {in:"Sign In",out:"Sign Out",temp:"Temporary Out",return:"Return"};
   var by    = document.getElementById("txSignedBy").value.trim();
@@ -1765,6 +1781,16 @@ function closeModal() {
     "<button class=\"btn btn-secondary\" style=\"flex:1\" onclick=\"closeModal()\">Cancel</button>" +
     "<button class=\"btn btn-primary\" style=\"flex:1\" onclick=\"execAction()\">Confirm</button>";
   document.querySelector(".modal-actions").style.display = ""; 
+  // If we came here via "View Roster" from the extra-child prompt, return to it
+  // rather than silently dropping it and leaving the details unrecorded.
+  if (returnToExtraChildPrompt) {
+    returnToExtraChildPrompt = false;
+    var st = states[curSid] || blank();
+    var extraChildren = (st.declaredC || 0) - (st.expectedC || 0);
+    if (extraChildren > 0) {
+      setTimeout(function() { showExtraChildPrompt(extraChildren); }, 50);
+    }
+  }
 }
 
 async function execAction() {
