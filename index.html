@@ -440,6 +440,23 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
 .wz-row.big i{font-size:18px;color:var(--text-2)}
 .wz-row.big b{font-size:36px;font-weight:800;line-height:1}
 .wz-bignums span{font-size:16px}
+@media (max-height:720px){
+.wz-primary{height:58px;font-size:20px;border-radius:16px}
+.wz-bar{padding:8px 14px 10px}
+.wz-bar .wz-inner{gap:8px}
+.wz-secondary{height:46px;font-size:17px}
+.wz-secondary.linkish{height:30px;margin-top:0}
+.wz-typebtn{height:58px;font-size:18px}
+#view-action .action-name{font-size:24px;margin:2px 0 4px}
+.wz-sub{font-size:20px;margin:10px 0 12px;padding-top:10px}
+.wz-prog{margin:6px 0 8px}
+.wz-row.big{padding:12px 16px}
+.wz-row.big b{font-size:30px}
+.wz-meta .wz-dr{font-size:14px}
+#wzNum .nbtn{height:68px}
+#wzNum .nval{font-size:48px}
+.action-scroll{padding-bottom:210px}
+}
 .wz-chaps{margin:20px 0 6px}
 .wz-lblrow{display:flex;align-items:center;gap:12px;margin-bottom:10px}
 .wz-lblrow em{font-style:normal;font-weight:500;letter-spacing:0;text-transform:none;color:var(--text-3);margin-left:6px;font-size:13px}
@@ -834,7 +851,7 @@ let queue  = [];
 let stateVersion = 0;
 // Bump this string every time a new build is deployed, so the on-screen
 // tag lets you instantly confirm you're not looking at a stale cached copy.
-const BUILD_VERSION = "v12.8 \u2013 2026-11-03 17:35";
+const BUILD_VERSION = "v12.9 \u2013 2026-11-03 18:10";
 let returnToExtraChildPrompt = false;
 let pendingSignInConfirm = false;
 let editingChildIndex = null;
@@ -948,6 +965,7 @@ async function gasPost(payload) {
   setSyncDot("syncing");
   try {
     const r = await fetchWithTimeout(url, {method:"POST", body:JSON.stringify(Object.assign({}, payload, {eventName:cfg.eventName, key:API_KEY}))});
+    if (!r.ok) throw new Error("HTTP " + r.status);
     const json = await r.json().catch(() => ({}));
     if (json.ok === false) throw new Error(json.error || "GAS error");
     setSyncDot("ok");
@@ -959,15 +977,20 @@ async function gasPost(payload) {
   }
 }
 
+let stateDirty = false;
 async function gasSaveState() {
   const url = cfg.gasUrl || GAS_URL;
   if (!url) return;
   try {
-    await fetchWithTimeout(url, {
+    const r = await fetchWithTimeout(url, {
       method: "POST",
       body: JSON.stringify({action:"saveState", cfg:cfg, states:states, txLog:txLog, stateVersion:stateVersion, eventName:cfg.eventName, key:API_KEY})
     });
-  } catch(e) {}
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const j = await r.json().catch(function() { return null; });
+    if (j && j.ok === false) throw new Error("rejected");
+    stateDirty = false;
+  } catch(e) { stateDirty = true; }
 }
 
 async function gasLoadState() {
@@ -999,6 +1022,7 @@ async function drainQueue() {
   for (const item of queue) {
     try {
       const r = await fetchWithTimeout(url, {method:"POST", body:JSON.stringify(Object.assign({}, item, {eventName:cfg.eventName, key:API_KEY}))});
+      if (!r.ok) throw new Error("HTTP " + r.status);
       const json = await r.json().catch(() => ({}));
       if (json.ok === false) throw new Error("GAS error");
     } catch(e) { fail.push(item); }
@@ -1013,6 +1037,7 @@ async function persist() { saveLocal(); gasSaveState(); }
 
 async function smartRefresh() {
   const ok = await gasLoadState();
+  if (!ok && stateDirty) gasSaveState();
   if (ok) {
     const v = document.querySelector(".view.active") ? document.querySelector(".view.active").id : "";
     if (v === "view-home") renderHome();
@@ -1080,9 +1105,16 @@ async function startApp() {
   if (tEl) tEl.textContent = "INITIALISING...";
   if (sEl) sEl.textContent = "Loading event data...";
   loadLocal();
+  var hadSavedCfg = false;
+  try { hadSavedCfg = !!localStorage.getItem(LS_CFG); } catch(e) {}
   if (sEl) sEl.textContent = "Connecting to Google...";
   var results = await Promise.all([runLoadingAnim(), gasLoadState()]);
   var gasOk = results[1];
+  if (!gasOk && !hadSavedCfg) {
+    document.getElementById("unavailScreen").classList.add("show");
+    hideLoadingScreen();
+    return;
+  }
   var hasData = txLog.length > 0 || Object.values(states).some(function(s) { return s.totCIn > 0; });
   if (sEl) {
     if (gasOk) sEl.textContent = "Data loaded from Google \u2713";
@@ -1201,7 +1233,7 @@ function renderHome() {
 
 function allSignedOut() {
   var arrived = cfg.schools.filter(function(s) { var st = states[s.id] || blank(); return st.totCIn > 0 || st.totAIn > 0; });
-  if (arrived.length === 0) return false;
+  if (arrived.length === 0 || arrived.length < cfg.schools.length) return false;
   return arrived.every(function(s) { var st = states[s.id] || blank(); return st.cIn === 0 && st.aIn === 0 && st.tempC === 0; });
 }
 
@@ -1801,8 +1833,24 @@ function doConfirm() {
     if (nC > st.cIn) { toast("Only " + st.cIn + " children inside", "err"); return; }
     if (nA > st.aIn) { toast("Only " + st.aIn + " adults inside",   "err"); return; }
   }
-  if (curType === "temp"   && nC > st.cIn)  { toast("Only " + st.cIn  + " children inside",   "err"); return; }
-  if (curType === "return" && nC > st.tempC) { toast("Only " + st.tempC + " children temp out", "err"); return; }
+  if (curType === "temp") {
+    if (nC > st.cIn) { toast("Only " + st.cIn + " children inside", "err"); return; }
+    if (nA > st.aIn) { toast("Only " + st.aIn + " adults inside", "err"); return; }
+  }
+  if (curType === "return") {
+    if (nC > (parseInt(st.tempC) || 0)) { toast("Only " + (parseInt(st.tempC) || 0) + " children temp out", "err"); return; }
+    if (nA > (parseInt(st.tempA) || 0)) { toast("Only " + (parseInt(st.tempA) || 0) + " adults temp out", "err"); return; }
+  }
+
+  // v12.9: the record must say who processed it (and where, if there is more than one door)
+  if (cfg.staffNames && cfg.staffNames.length > 0 && !activeStaffName) {
+    var se = document.getElementById("wzStaffEdit"); if (se) se.classList.add("open");
+    toast("Choose who is processing this", "err"); return;
+  }
+  if (cfg.locationNames && cfg.locationNames.length > 1 && !activeDeviceLocation) {
+    var le = document.getElementById("wzLocEdit"); if (le) le.classList.add("open");
+    toast("Choose the location", "err"); return;
+  }
 
   // Catch children being signed in beyond what was declared, even if that
   // wasn't apparent at declaration time. Without this, extra children get
@@ -2779,7 +2827,7 @@ function schoolById(id) { return cfg.schools.find(function(s) { return s.id === 
 
 function namedChaps(sc) {
   if (!sc || !sc.chaperoneNames || !String(sc.chaperoneNames).trim()) return [];
-  return String(sc.chaperoneNames).split(",").map(function(n) { return n.trim(); }).filter(function(n) { return n; });
+  return String(sc.chaperoneNames).split(/[,;\n\r]+/).map(function(n) { return n.trim(); }).filter(function(n) { return n; });
 }
 
 function hasMedical(sc) {
