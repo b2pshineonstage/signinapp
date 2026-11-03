@@ -857,7 +857,9 @@ let queue  = [];
 let stateVersion = 0;
 // Bump this string every time a new build is deployed, so the on-screen
 // tag lets you instantly confirm you're not looking at a stale cached copy.
-const BUILD_VERSION = "v12.12 \u2013 2026-11-03 20:40";
+function tempText(st){var c=parseInt(st.tempC)||0,a=parseInt(st.tempA)||0,p=[];if(c>0)p.push(c+(c===1?" child":" children"));if(a>0)p.push(a+(a===1?" adult":" adults"));return p.join(" and ");}
+function tempAny(st){return (parseInt(st.tempC)||0)>0||(parseInt(st.tempA)||0)>0;}
+const BUILD_VERSION = "v12.14 \u2013 2026-11-03 22:55";
 let returnToExtraChildPrompt = false;
 let pendingSignInConfirm = false;
 let editingChildIndex = null;
@@ -1210,7 +1212,7 @@ function renderHome() {
   document.getElementById("schoolsList").innerHTML = cfg.schools.map(function(s) {
     var st = states[s.id] || blank();
     var arrived = st.totCIn > 0 || st.totAIn > 0;
-    var allOut  = arrived && st.cIn === 0 && st.aIn === 0 && st.tempC === 0;
+    var allOut  = arrived && st.cIn === 0 && st.aIn === 0 && !tempAny(st);
     var cls = "school-card" + (allOut ? " fully-out" : (st.cIn > 0 || st.aIn > 0 ? " has-people" : ""));
     var townLine = s.town ? "<div class=\"school-town-line\">" + esc(s.town) + "</div>" : "";
     var pills = "";
@@ -1221,7 +1223,7 @@ function renderHome() {
     else {
       pills += "<span class=\"pill pill-gold\"><b>" + st.cIn + "</b> children in</span>";
       pills += "<span class=\"pill pill-gold\"><b>" + st.aIn + "</b> " + (st.aIn === 1 ? "adult" : "adults") + " in</span>";
-      if (st.tempC > 0) pills += "<span class=\"pill pill-amber\"><b>" + st.tempC + "</b> temp out</span>";
+      if (tempAny(st)) pills += "<span class=\"pill pill-amber\">" + tempText(st) + " temp out</span>";
       if (allOut) pills += "<span class=\"pill pill-green\">\u2713 All signed out</span>";
     }
     
@@ -1263,7 +1265,7 @@ function renderHome() {
 function allSignedOut() {
   var arrived = cfg.schools.filter(function(s) { var st = states[s.id] || blank(); return st.totCIn > 0 || st.totAIn > 0; });
   if (arrived.length === 0 || arrived.length < cfg.schools.length) return false;
-  return arrived.every(function(s) { var st = states[s.id] || blank(); return st.cIn === 0 && st.aIn === 0 && st.tempC === 0; });
+  return arrived.every(function(s) { var st = states[s.id] || blank(); return st.cIn === 0 && st.aIn === 0 && !tempAny(st); });
 }
 
 // =============================================================
@@ -1467,7 +1469,7 @@ function viewRosterFromPrompt() {
 function renderStatLine(sc, st) {
   var inside = st.cIn + st.aIn;
   var isLive = inside > 0;
-  var tempNote = st.tempC > 0 ? " (" + st.tempC + " temp out)" : "";
+  var tempNote = tempAny(st) ? " (" + tempText(st) + " temp out)" : "";
   
   // Use declared numbers if set, otherwise fall back to config
   var expectedC = st.declaredC !== null ? st.declaredC : (parseInt(sc.performers) || null);
@@ -2165,8 +2167,8 @@ function renderFire() {
     var st = states[s.id] || blank();
     totC += st.cIn; totA += st.aIn;
     var tot    = st.cIn + st.aIn;
-    var nobody = tot === 0 && st.tempC === 0;
-    var cls    = "fire-row" + (st.tempC > 0 ? " temp-warn" : tot > 0 ? " has-people" : " nobody");
+    var nobody = tot === 0 && !tempAny(st);
+    var cls    = "fire-row" + (tempAny(st) ? " temp-warn" : tot > 0 ? " has-people" : " nobody");
     var info   = [];
     if (s.town)      info.push(s.town);
     if (s.principal) info.push(s.principal);
@@ -2175,7 +2177,7 @@ function renderFire() {
         "<div class=\"fire-school-name\">" + esc(s.name) + "</div>" +
         (info.length ? "<div class=\"fire-info-line\">" + esc(info.join(", ")) + "</div>" : "") +
         (s.tel && !nobody ? "<div class=\"fire-tel\">\u260e\ufe0f " + esc(s.tel) + "</div>" : "") +
-        (st.tempC > 0 ? "<div class=\"fire-temp-note\">\u26a0 " + st.tempC + " child" + (st.tempC !== 1 ? "ren" : "") + " currently outside</div>" : "") +
+        (tempAny(st) ? "<div class=\"fire-temp-note\">\u26a0 " + tempText(st) + " currently outside</div>" : "") +
       "</div>" +
       "<div><div class=\"fire-count-big\">" + tot + "</div><div class=\"fire-count-detail\">" + (nobody ? "signed out" : st.cIn + "C + " + st.aIn + "A") + "</div></div>" +
     "</div>";
@@ -2205,8 +2207,8 @@ function buildFirePDF() {
   doc.text("TOTAL IN BUILDING: "+(totC+totA)+" people  ("+totC+" children / "+totA+" adults)",18,y+8); y+=18;
   cfg.schools.forEach(function(s,i){
     if(y>265){doc.addPage();y=16;}
-    var st=states[s.id]||blank(); var tot=st.cIn+st.aIn; var nobody=tot===0&&st.tempC===0;
-    var rowH=st.tempC>0?20:14;
+    var st=states[s.id]||blank(); var tot=st.cIn+st.aIn; var nobody=tot===0&&!tempAny(st);
+    var rowH=tempAny(st)?20:14;
     var bg=nobody?[40,40,40]:i%2===0?[248,248,248]:[255,255,255];
     doc.setFillColor(bg[0],bg[1],bg[2]); doc.rect(14,y,182,rowH,"F");
     doc.setFont("helvetica","bold"); doc.setFontSize(11); doc.setTextColor(nobody?150:0);
@@ -2216,7 +2218,7 @@ function buildFirePDF() {
     doc.setFont("helvetica","normal"); doc.setFontSize(8.5); doc.setTextColor(100,100,100);
     var sub=[]; if(s.principal)sub.push(s.principal); if(s.tel)sub.push(s.tel);
     if(sub.length)doc.text(sub.join(", "),16,y+13.5);
-    if(st.tempC>0){doc.setTextColor(200,100,0);doc.setFont("helvetica","bold");doc.text("\u26a0 "+st.tempC+" child"+(st.tempC!==1?"ren":"")+" temporarily OUTSIDE",16,y+18);}
+    if(tempAny(st)){doc.setTextColor(200,100,0);doc.setFont("helvetica","bold");doc.text("\u26a0 "+tempText(st)+" temporarily OUTSIDE",16,y+18);}
     doc.setTextColor(0); y+=rowH+1;
   });
   return doc;
@@ -2614,17 +2616,17 @@ function renderReport() {
     var dt = new Date(cfg.driveUploadedAt);
     ds.innerHTML = "<div class=\"drive-saved-box\">\u2713 Last saved to Drive: " + dt.toLocaleDateString("en-GB") + " at " + dt.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}) + "</div>";
   } else { ds.innerHTML = ""; }
-  var stillIn = cfg.schools.filter(function(s){var st=states[s.id]||blank();return st.cIn>0||st.aIn>0||st.tempC>0;});
+  var stillIn = cfg.schools.filter(function(s){var st=states[s.id]||blank();return st.cIn>0||st.aIn>0||tempAny(st);});
   var ov = document.getElementById("rOverride");
   if (stillIn.length > 0) {
     ov.innerHTML = "<div class=\"override-box\">" +
       "<div class=\"override-title\">\u26a0\ufe0f " + stillIn.length + " school" + (stillIn.length!==1?"s":"") + " still have people signed in</div>" +
-      "<div class=\"override-body\">" + stillIn.map(function(s){var st=states[s.id]||blank();return esc(s.name)+": "+(st.cIn+st.aIn+st.tempC)+" people inside";}).join("<br>") + "<br><br>Enter a reason below to save with outstanding numbers.</div>" +
+      "<div class=\"override-body\">" + stillIn.map(function(s){var st=states[s.id]||blank();return esc(s.name)+": "+(st.cIn+st.aIn+(parseInt(st.tempC)||0)+(parseInt(st.tempA)||0))+" people inside";}).join("<br>") + "<br><br>Enter a reason below to save with outstanding numbers.</div>" +
       "<div class=\"field-group\"><label class=\"field-label\">Reason <span class=\"field-label-opt\">(required)</span></label><textarea class=\"field-input\" id=\"overrideReason\" placeholder=\"e.g. 3 children from Elite Dance left with parents, confirmed with Jade Falconer at 17:42.\"></textarea></div>" +
     "</div>";
   } else { ov.innerHTML = ""; }
   document.getElementById("rBody").innerHTML = cfg.schools.map(function(s){
-    var st=states[s.id]||blank(); var rem=st.cIn+st.aIn+st.tempC;
+    var st=states[s.id]||blank(); var rem=st.cIn+st.aIn+(parseInt(st.tempC)||0)+(parseInt(st.tempA)||0);
     var arrivedR=(st.totCIn>0||st.totAIn>0);
     var status=!arrivedR&&rem===0?"<td class=\"td-muted\">Not arrived</td>":(rem>0?"<td class=\"td-warn\">"+rem+" still in \u26a0</td>":"<td class=\"td-ok\">\u2705 All out</td>");
     return "<tr><td>"+esc(s.name)+(s.town?"<br><small style=\"color:var(--text-3)\">"+esc(s.town)+"</small>":"")+"</td><td>"+st.totCIn+"C / "+st.totAIn+"A</td><td>"+st.totCOut+"C / "+st.totAOut+"A</td>"+status+"</tr>";
@@ -2648,7 +2650,7 @@ function renderReport() {
 async function saveToDrive() {
   var url = cfg.gasUrl || GAS_URL;
   if (!url) { toast("Add your Web App URL in Settings first","err"); return; }
-  var stillIn = cfg.schools.filter(function(s){var st=states[s.id]||blank();return st.cIn>0||st.aIn>0||st.tempC>0;});
+  var stillIn = cfg.schools.filter(function(s){var st=states[s.id]||blank();return st.cIn>0||st.aIn>0||tempAny(st);});
   if (stillIn.length > 0) {
     var el = document.getElementById("overrideReason");
     if (!el || !el.value.trim()) {
@@ -2738,7 +2740,7 @@ function buildPDFDoc() {
   ["School","C In","A In","C Out","A Out","Still In","Status"].forEach(function(h,i){doc.text(h,cols[i]+1.5,y+5.5);}); y+=8;
   cfg.schools.forEach(function(s,i){
     if(y>262){doc.addPage();y=18;}
-    var st=states[s.id]||blank(); var rem=st.cIn+st.aIn+st.tempC;
+    var st=states[s.id]||blank(); var rem=st.cIn+st.aIn+(parseInt(st.tempC)||0)+(parseInt(st.tempA)||0);
     if(i%2===0){doc.setFillColor(248,248,248);doc.rect(14,y,182,9,"F");}
     doc.setFont("helvetica","normal"); doc.setFontSize(7.5); doc.setTextColor(0);
     var nm=s.name.length>32?s.name.slice(0,30)+"\u2026":s.name;
