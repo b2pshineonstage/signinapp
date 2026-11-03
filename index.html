@@ -406,6 +406,39 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
 .wz-row span,.wz-row i{white-space:nowrap}
 .wz-others{background:var(--surface);border:1px solid var(--border-2);border-radius:18px;padding:12px 14px;margin-top:14px}
 .wz-others .wz-lbl{margin-top:2px}
+
+/* ===== v12.2 TYPE SCALE ===== */
+#view-action .action-name{font-size:28px;font-weight:800;line-height:1.12;letter-spacing:-.01em;margin:4px 0 6px;color:var(--text)}
+.wz-step{margin:6px 0 4px}
+.wz-ov{display:flex;align-items:baseline;gap:12px;font-size:12px;font-weight:700;letter-spacing:.1em}
+.wz-ov .wz-act{color:var(--accent)}
+.wz-ov .wz-n{color:var(--text-3);font-weight:600}
+.wz-prog{display:flex;gap:6px;margin:8px 0 14px}
+.wz-prog i{flex:1;height:4px;border-radius:2px;background:var(--border-2)}
+.wz-prog i.on{background:var(--accent)}
+.wz-meta{margin:0 0 4px;min-height:0}
+.wz-meta .wz-dr{font-size:15px;font-weight:500;color:var(--text-2)}
+.wz-bar{background:var(--bg)}
+.wz-meta .wz-med{font-size:28px}
+.wz-sub{font-size:23px;font-weight:700;line-height:1.25;color:var(--text);margin:16px 0 20px;padding-top:16px;border-top:1px solid var(--border)}
+.wz-panel .num-grid{gap:22px;margin-bottom:8px}
+.wz-panel .num-group label{font-size:13px;font-weight:700;letter-spacing:.1em;color:var(--text-2);margin-bottom:8px}
+.wz-panel .nval{font-size:64px;font-weight:800;line-height:1}
+.wz-panel .nbtn{width:96px;height:100px;font-size:48px}
+.wz-still{font-size:16px;font-weight:500;color:var(--text-2);margin:12px 0 4px}
+.wz-still b{font-weight:800;color:var(--text)}
+.wz-still.wz-warn{color:var(--amber)}
+.wz-still.wz-warn b{color:var(--amber)}
+.wz-linkbtn{font-size:16px;font-weight:600;padding:12px 14px}
+.wz-center{margin:10px 0 6px}
+.wz-row{font-size:17px}
+.wz-row i{font-size:16px}
+.wz-row span b{font-weight:700}
+.wz-row u{font-size:15px;font-weight:600}
+.wz-row.big{padding:18px 18px}
+.wz-row.big i{font-size:18px;color:var(--text-2)}
+.wz-row.big b{font-size:36px;font-weight:800;line-height:1}
+.wz-bignums span{font-size:16px}
 </style>
 </head>
 <body>
@@ -527,9 +560,10 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
 
     <!-- STEP: check and sign in -->
     <div class="wz-panel" id="wzConf">
+      <div class="wz-sub" id="wzConfSub"></div>
       <div class="wz-sum">
-        <div class="wz-row"><i>Children</i><b id="wzSumC">0</b></div>
-        <div class="wz-row"><i>Adults</i><b id="wzSumA">0</b></div>
+        <div class="wz-row big"><i>Children</i><b id="wzSumC">0</b></div>
+        <div class="wz-row big"><i>Adults</i><b id="wzSumA">0</b></div>
         <div class="wz-row"><i>Signed by</i><span><b id="wzSumBy"></b><u onclick="wzToggleEdit('wzByEdit')">change</u></span></div>
         <div id="wzByEdit" class="wz-edit"><input class="field-input" id="txSignedBy" placeholder="Name of person handing over the group" oninput="wzFillSummary()"></div>
         <div class="wz-row"><i>Processed by</i><span><b id="wzSumStaff"></b><u onclick="wzToggleEdit('wzStaffEdit')">change</u></span></div>
@@ -785,7 +819,7 @@ let queue  = [];
 let stateVersion = 0;
 // Bump this string every time a new build is deployed, so the on-screen
 // tag lets you instantly confirm you're not looking at a stale cached copy.
-const BUILD_VERSION = "v12.1 \u2013 2026-11-03 17:30";
+const BUILD_VERSION = "v12.2 \u2013 2026-11-03 15:30";
 let returnToExtraChildPrompt = false;
 let pendingSignInConfirm = false;
 let editingChildIndex = null;
@@ -2833,12 +2867,12 @@ function wzNumHint() {
   var h = "";
   if (curType === "in" && st.declaredC !== null) {
     var leftC = st.declaredC - (parseInt(st.totCIn) || 0) - nC;
-    if (leftC > 0) h += "<span class=\"wz-still\">" + leftC + (leftC === 1 ? " child" : " children") + " still to come</span>";
-    else if (leftC < 0) h += "<span class=\"wz-still wz-warn\">" + (-leftC) + " more " + (-leftC === 1 ? "child" : "children") + " than the contingent</span>";
+    if (leftC > 0) h += "<span class=\"wz-still\"><b>" + leftC + "</b>" + (leftC === 1 ? " child" : " children") + " still to come</span>";
+    else if (leftC < 0) h += "<span class=\"wz-still wz-warn\"><b>" + (-leftC) + "</b> more " + (-leftC === 1 ? "child" : "children") + " than the contingent</span>";
     if (!wz.hasChap && st.declaredA !== null) {
       var leftA = st.declaredA - (parseInt(st.totAIn) || 0) - nA;
-      if (leftA > 0) h += "<span class=\"wz-still\">" + leftA + (leftA === 1 ? " adult" : " adults") + " still to come</span>";
-      else if (leftA < 0) h += "<span class=\"wz-still wz-warn\">" + (-leftA) + " more " + (-leftA === 1 ? "adult" : "adults") + " than the contingent</span>";
+      if (leftA > 0) h += "<span class=\"wz-still\"><b>" + leftA + "</b>" + (leftA === 1 ? " adult" : " adults") + " still to come</span>";
+      else if (leftA < 0) h += "<span class=\"wz-still wz-warn\"><b>" + (-leftA) + "</b> more " + (-leftA === 1 ? "adult" : "adults") + " than the contingent</span>";
     }
   }
   el.innerHTML = h;
@@ -2877,7 +2911,10 @@ function wzRender() {
   var numTitle = {"in": "Count who is arriving", out: "Count who is leaving", temp: "Count who is going out", "return": "Count who is returning"}[curType] || "How many";
   var titles = {decl: "Check the group", num: numTitle, conf: "Check and sign in"};
   var prefix = {"in": "", out: "Sign out. ", temp: "Temp out. ", "return": "Return. "}[curType] || "";
-  document.getElementById("wzStepLabel").innerHTML = "<span>STEP " + (wz.i + 1) + " OF " + n + "</span>  " + esc(prefix + titles[step]);
+  var actName = {"in": "SIGN IN", out: "SIGN OUT", temp: "TEMP OUT", "return": "RETURN"}[curType] || "";
+  var segs = "";
+  for (var k = 0; k < n; k++) segs += "<i" + (k <= wz.i ? " class=\"on\"" : "") + "></i>";
+  document.getElementById("wzStepLabel").innerHTML = "<div class=\"wz-ov\"><span class=\"wz-act\">" + actName + "</span><span class=\"wz-n\">STEP " + (wz.i + 1) + " OF " + n + "</span></div><div class=\"wz-prog\">" + segs + "</div>";
   document.getElementById("wzTopBack").style.display = "";
   document.getElementById("aInfoLine").style.display = "none";
   wzBar("main");
@@ -2920,6 +2957,7 @@ function wzRender() {
     wzButtons("Next", false, null);
   } else if (step === "conf") {
     wzPanels("wzConf");
+    document.getElementById("wzConfSub").textContent = {"in": "Check it, then sign them in.", out: "Check it, then sign them out.", temp: "Check it, then confirm.", "return": "Check it, then confirm the return."}[curType] || "";
     // With only one location set up, use it without asking
     if (!activeDeviceLocation && cfg.locationNames && cfg.locationNames.length === 1) activeDeviceLocation = cfg.locationNames[0];
     renderStaffChips();
