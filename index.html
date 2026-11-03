@@ -441,6 +441,12 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
 .wz-row.big b{font-size:36px;font-weight:800;line-height:1}
 .wz-bignums span{font-size:16px}
 .wz-chaps{margin:20px 0 6px}
+.wz-lblrow{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.wz-lblrow em{font-style:normal;font-weight:500;letter-spacing:0;text-transform:none;color:var(--text-3);margin-left:6px;font-size:13px}
+.wz-i{flex:none;width:30px;height:30px;border-radius:50%;border:1.5px solid var(--text-3);background:none;color:var(--text-3);font-family:var(--font);font-size:15px;font-weight:700;font-style:italic;line-height:1;padding:0;cursor:pointer}
+.wz-i:active{background:var(--surface-2)}
+.wz-info{display:none;font-size:15px;line-height:1.4;color:var(--text-2);background:var(--surface);border:1px solid var(--border-2);border-radius:12px;padding:10px 14px;margin:0 0 12px}
+.wz-info.open{display:block}
 #wzOtherRow .wz-otherinput{margin-top:2px}
 #wzNum .nbtn{height:84px}
 #wzNum .nval{font-size:58px}
@@ -563,8 +569,8 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
       </div>
       <div id="wzNumHint"></div>
       <div id="wzAdultWarn"></div>
-      <div id="wzChapRow" class="wz-chaps"><div class="wz-lbl">Chaperones here</div><div class="wz-subnote">Optional. A record only, it does not change the Adults number.</div><div id="chapSection"></div></div>
-      <div id="wzOtherRow" class="wz-chaps"><div class="wz-lbl">Another adult, not a chaperone</div><div class="wz-subnote">Optional. Count them in Adults, then say who they are.</div><div id="wzOtherList"></div><div class="wz-center" style="text-align:left;margin:4px 0 0"><button class="wz-linkbtn" style="padding-left:0" onclick="addOtherAdult()">Add another adult</button></div></div>
+      <div id="wzChapRow" class="wz-chaps"><div class="wz-lbl wz-lblrow"><span>Chaperones here <em>optional</em></span><button class="wz-i" onclick="wzToggleInfo('wzChapInfo')" aria-label="More information">i</button></div><div class="wz-info" id="wzChapInfo">A record only. Ticking names does not change the Adults number.</div><div id="chapSection"></div></div>
+      <div id="wzOtherRow" class="wz-chaps"><div class="wz-lbl wz-lblrow"><span>Other adult <em>optional</em></span><button class="wz-i" onclick="wzToggleInfo('wzOtherInfo')" aria-label="More information">i</button></div><div class="wz-info" id="wzOtherInfo">Someone who is not a chaperone, for example a DBS officer. Count them in Adults as well, then say who they are here. It goes in the note.</div><div id="wzOtherList"></div><div class="wz-center" style="text-align:left;margin:4px 0 0"><button class="wz-linkbtn" style="padding-left:0" onclick="addOtherAdult()">Add another adult</button></div></div>
       <div class="wz-center" id="wzQuick"></div>
       <div class="wz-center" id="wzNumRoster" style="display:none"><button class="wz-linkbtn" onclick="showRoster()">View roster</button></div>
     </div>
@@ -828,7 +834,7 @@ let queue  = [];
 let stateVersion = 0;
 // Bump this string every time a new build is deployed, so the on-screen
 // tag lets you instantly confirm you're not looking at a stale cached copy.
-const BUILD_VERSION = "v12.7 \u2013 2026-11-03 17:15";
+const BUILD_VERSION = "v12.8 \u2013 2026-11-03 17:35";
 let returnToExtraChildPrompt = false;
 let pendingSignInConfirm = false;
 let editingChildIndex = null;
@@ -2858,6 +2864,11 @@ function wzInitNumbers() {
 
 function wzChapInit() { /* v12.1: chaperone list is built in setType and is optional */ }
 
+function wzToggleInfo(id) {
+  var e = document.getElementById(id);
+  if (e) e.classList.toggle("open");
+}
+
 function wzAdultCheck() {
   var el = document.getElementById("wzAdultWarn");
   if (!el) return;
@@ -2868,10 +2879,7 @@ function wzAdultCheck() {
     document.querySelectorAll("#wzOtherList input").forEach(function(i) { if (i.value.trim()) others++; });
     var named = ticked + others;
     if (named > (parseInt(nA) || 0)) {
-      var parts = [];
-      if (ticked) parts.push(ticked + (ticked === 1 ? " chaperone" : " chaperones"));
-      if (others) parts.push(others + (others === 1 ? " other adult" : " other adults"));
-      html = "<span class=\"wz-still wz-warn\">Adults says <b>" + (parseInt(nA) || 0) + "</b>, but you have named <b>" + named + "</b> (" + parts.join(" and ") + "). Check the Adults number.</span>";
+      html = "<span class=\"wz-still wz-warn\"><b>" + named + "</b> " + (named === 1 ? "adult" : "adults") + " named, but Adults says <b>" + (parseInt(nA) || 0) + "</b>.</span>";
     }
   }
   el.innerHTML = html;
