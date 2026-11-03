@@ -857,7 +857,7 @@ let queue  = [];
 let stateVersion = 0;
 // Bump this string every time a new build is deployed, so the on-screen
 // tag lets you instantly confirm you're not looking at a stale cached copy.
-const BUILD_VERSION = "v12.11 \u2013 2026-11-03 20:30";
+const BUILD_VERSION = "v12.12 \u2013 2026-11-03 20:40";
 let returnToExtraChildPrompt = false;
 let pendingSignInConfirm = false;
 let editingChildIndex = null;
@@ -2956,7 +2956,7 @@ function wzAdultCheck() {
     document.querySelectorAll("#wzOtherList input").forEach(function(i) { if (i.value.trim()) others++; });
     var named = ticked + others;
     if (named > (parseInt(nA) || 0)) {
-      html = "<span class=\"wz-still wz-warn\"><b>" + named + "</b> " + (named === 1 ? "adult" : "adults") + " named, but Adults says <b>" + (parseInt(nA) || 0) + "</b>.</span>";
+      html = "<span class=\"wz-still wz-warn\">\u26a0\ufe0f <b>" + named + "</b> " + (named === 1 ? "adult" : "adults") + " named, but Adults says <b>" + (parseInt(nA) || 0) + "</b>.</span>";
     }
   }
   el.innerHTML = html;
