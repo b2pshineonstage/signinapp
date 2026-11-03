@@ -205,7 +205,7 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
 .s-chip{border-radius:22px;padding:6px 14px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;border:2px solid var(--border-2);background:var(--surface-2);color:var(--text-2);-webkit-tap-highlight-color:transparent}
 .s-chip.active{background:var(--accent);border-color:var(--accent);color:#000}
 
-/* v10: AMEND TRIGGER — proper button, not tiny text */
+/* v10: AMEND TRIGGER, proper button, not tiny text */
 .amend-trigger-wrap{margin-bottom:14px}
 .amend-trigger{display:block;width:100%;background:var(--surface-2);border:1px solid var(--border-2);border-radius:var(--radius-sm);color:var(--text-2);font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;padding:11px 14px;text-align:center;-webkit-tap-highlight-color:transparent}
 .amend-trigger:active{opacity:0.75}
@@ -217,7 +217,7 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
 .loc-chip.active{background:var(--accent);border-color:var(--accent);color:#000;}
 .loc-chip.unset{border-color:var(--amber-bdr);color:var(--amber)}
 
-/* v10: TWO-PARTY SIGN-IN — processed-by label */
+/* v10: TWO-PARTY SIGN-IN, processed-by label */
 .proc-by-label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-2);margin-bottom:5px;margin-top:12px}
 
 /* v10: ACTIVITY LOG (Item 14) */
@@ -326,7 +326,7 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
 .decl-btn{width:100%;padding:16px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:#000;font-family:var(--font);font-size:16px;font-weight:700;cursor:pointer;margin-top:8px}
 .decl-btn:active{opacity:0.8}
 
-/* v10: CONFIRM OVERLAY — gold glow, matches loading screen */
+/* v10: CONFIRM OVERLAY, gold glow, matches loading screen */
 .co-overlay{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;flex-direction:column;gap:10px;padding:30px;cursor:pointer;background:rgba(0,0,0,0.95)}
 .co-overlay.show{display:flex}
 .co-glow{position:absolute;top:50%;left:50%;width:180px;height:180px;background:#F0A500;border-radius:50%;transform:translate(-50%,-50%);filter:blur(45px);animation:glowPulse 3s infinite ease-in-out;z-index:0;pointer-events:none}
@@ -342,6 +342,68 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
 .toast.err{background:var(--red-bg);border-color:var(--red-bdr);color:var(--red)}
 .toast.info{background:var(--accent-bg);border-color:var(--accent-bdr);color:var(--accent)}
 .mt12{margin-top:12px}
+
+/* ===== v12 WIZARD STYLES ===== */
+.school-expect{font-size:14px;color:var(--text-2);margin-bottom:7px}
+.school-expect b{color:var(--text);font-weight:800}
+.pill b{font-weight:800}
+.school-meta{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:8px}
+.wz-dr{font-size:13px;color:var(--text-3)}
+.wz-med{font-size:22px;line-height:1;flex-shrink:0;margin-left:auto}
+.wz-meta{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 8px}
+.wz-meta .wz-dr{font-size:14px;color:var(--text-2)}
+.wz-meta .wz-med{font-size:26px}
+.wz-step{font-size:14px;font-weight:600;color:var(--text-3);letter-spacing:.04em;margin-bottom:4px}
+.wz-step span{color:var(--accent);font-weight:800}
+.wz-panel{display:none}
+.wz-sub{font-size:17px;color:var(--text-3);margin:6px 0 14px;line-height:1.4}
+.wz-bignums{display:flex;justify-content:space-around;background:var(--surface);border:1px solid var(--border-2);border-radius:20px;padding:22px 12px;margin:10px 0 14px;text-align:center}
+.wz-bignums div{display:flex;flex-direction:column;align-items:center}
+.wz-bignums b{font-size:58px;font-weight:800;line-height:1;color:var(--text)}
+.wz-bignums span{font-size:17px;color:var(--text-2);margin-top:4px}
+.wz-still{display:block;font-size:17px;font-weight:600;color:var(--accent);margin:8px 0 12px}
+.wz-warn{color:var(--amber)}
+.wz-center{text-align:center;margin:6px 0 10px}
+.wz-linkbtn{background:none;border:none;color:var(--accent);font-family:var(--font);font-size:18px;font-weight:600;text-decoration:underline;text-underline-offset:4px;cursor:pointer;padding:12px 16px}
+.wz-lbl{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2);margin:18px 0 6px}
+.wz-panel .num-grid{grid-template-columns:1fr;gap:6px;margin-bottom:6px}
+.wz-panel .num-wrap{border-radius:18px;border-width:2px}
+.wz-panel .nbtn{width:88px;height:88px;font-size:46px}
+.wz-panel .nval{font-size:48px;font-weight:800}
+.wz-bar{flex-direction:column;gap:0;padding:12px 16px 24px}
+.wz-bar .wz-inner{display:flex;flex-direction:column;gap:12px;width:100%}
+.wz-primary{width:100%;border:none;border-radius:18px;font-family:var(--font);font-weight:800;font-size:22px;height:72px;background:var(--accent);color:#1a1200;cursor:pointer}
+.wz-primary.go{background:var(--green);color:#04210f}
+.wz-primary:disabled{opacity:.5}
+.wz-primary:active{opacity:.8}
+.wz-secondary{width:100%;border-radius:16px;font-family:var(--font);font-weight:700;font-size:18px;height:58px;cursor:pointer;background:transparent;color:var(--text);border:2px solid var(--border-2)}
+.wz-secondary.linkish{border:none;text-decoration:underline;text-underline-offset:4px;color:var(--text-3);height:44px;margin-top:10px}
+.wz-types{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.wz-typebtn{border-radius:18px;font-family:var(--font);font-weight:800;font-size:20px;height:72px;border:2px solid var(--border-2);background:var(--surface-2);color:var(--text);cursor:pointer}
+.wz-typebtn.in{background:var(--accent);color:#1a1200;border-color:var(--accent)}
+.wz-typebtn:active{opacity:.8}
+.wz-chap{display:flex;align-items:center;gap:14px;background:var(--surface);border:2px solid var(--border-2);border-radius:18px;padding:12px 16px;margin-bottom:12px;min-height:70px;cursor:pointer}
+.wz-chap .box{width:42px;height:42px;border-radius:11px;border:3px solid #5a5a68;flex:none;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:transparent}
+.wz-chap.on .box{background:var(--green);border-color:var(--green);color:#04210f}
+.wz-chap .nm{font-size:21px;font-weight:600;flex:1;line-height:1.2}
+.wz-chap .nt{font-size:16px;color:var(--accent);text-decoration:underline;padding:10px 4px}
+.wz-chapnote{margin:-6px 0 12px}
+.wz-chapnote input,.wz-otherinput{width:100%;background:var(--surface);border:2px solid var(--border-2);border-radius:14px;color:var(--text);font-family:var(--font);font-size:16px;padding:12px 14px;outline:none}
+.wz-adultsin{text-align:center;font-size:20px;font-weight:600;margin:6px 0 8px}
+.wz-adultsin b{font-weight:800}
+.wz-sum{background:var(--surface);border:1px solid var(--border-2);border-radius:20px;overflow:hidden;margin:10px 0 6px}
+.wz-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:15px 18px;border-bottom:1px solid var(--border);font-size:19px}
+.wz-row i{font-style:normal;color:var(--text-3)}
+.wz-row b{font-weight:800}
+.wz-row u{color:var(--accent);font-weight:600;margin-left:8px;cursor:pointer;padding:8px 2px}
+.wz-edit{display:none;padding:12px 14px;background:var(--surface-2);border-bottom:1px solid var(--border)}
+.wz-edit.open{display:block}
+.wz-edit .s-chip,.wz-edit .loc-chip{font-size:17px;padding:12px 18px}
+.wz-edit .chip-row{gap:10px}
+.wz-panel .field-input{font-size:17px}
+.action-scroll{padding-bottom:280px}
+.wz-others{background:var(--surface);border:1px solid var(--border-2);border-radius:18px;padding:12px 14px;margin-top:14px}
+.wz-others .wz-lbl{margin-top:2px}
 </style>
 </head>
 <body>
@@ -398,69 +460,90 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
     <div style="flex:1"></div>
   </div>
 </div>
-<!-- ACTION -->
+<!-- ACTION (v12 step by step) -->
 <div class="view" id="view-action">
   <div class="action-scroll">
-    <button class="back-btn" onclick="showView('home')">&#8592; Back</button>
-    <div id="actionTopSection" class="action-top-dimmed">
+    <button class="back-btn" id="wzTopBack" onclick="wzBack()">&#8592; Back</button>
+    <div class="wz-step" id="wzStepLabel"></div>
     <div class="action-name" id="aName"></div>
     <div class="action-info-line" id="aInfoLine"></div>
-    <!-- Stat line -->
-    <div id="aStatLine" class="stat-line"></div>
-    
-    <!-- Discrepancy details (hidden by default, shown inline when icon clicked) -->
-    <div id="discrepDetails" class="discrep-inline-details" style="display:none"></div>
-    
-    <!-- View Roster button -->
-    <div id="viewRosterBtn" style="display:none;margin-bottom:14px">
-      <button class="btn btn-ghost btn-full" onclick="showRoster()" style="font-size:14px">👥 View Roster</button>
+    <div class="wz-meta" id="aMeta"></div>
+
+    <!-- CARD: shown for a school that has already arrived -->
+    <div class="wz-panel" id="wzCard">
+      <div id="aStatLine" class="stat-line"></div>
+      <div id="discrepDetails" class="discrep-inline-details" style="display:none"></div>
+      <div id="wzCardNums"></div>
+      <div id="viewRosterBtn" class="wz-center" style="display:none">
+        <button class="wz-linkbtn" onclick="showRoster()">View roster</button>
+      </div>
+      <div class="amend-trigger-wrap" id="amendTriggerWrap" style="display:none">
+        <button class="amend-trigger" onclick="openAmend()">&#9998; Amend current numbers</button>
+      </div>
+      <div class="activity-section" id="activitySection">
+        <button class="activity-toggle-btn" onclick="toggleActivityLog()">
+          <span>Activity so far</span>
+          <span id="activityChevron">&#9660;</span>
+        </button>
+        <div class="activity-entries" id="activityEntries"></div>
+      </div>
     </div>
-    
-    <div class="section-label">What are you doing?</div>
-    <div class="type-grid">
-      <button class="type-btn primary tbtn-in"     onclick="setType('in')">&#10003; Sign In</button>
-      <button class="type-btn primary tbtn-out"    onclick="setType('out')">&#8592; Sign Out</button>
-      <button class="type-btn secondary tbtn-temp"   onclick="setType('temp')">&#9208; Temp Out</button>
-      <button class="type-btn secondary tbtn-return" onclick="setType('return')">&#8635; Return</button>
+
+    <!-- STEP: today's contingent (first arrival only) -->
+    <div class="wz-panel" id="wzDecl">
+      <div class="wz-sub">Ask the teacher: is this the full group for today?</div>
+      <div id="declGate">
+        <div class="wz-bignums"><div><b id="declGateC">0</b><span>children</span></div><div><b id="declGateA">0</b><span>adults</span></div></div>
+        <div class="wz-center" id="declRosterLink"><button class="wz-linkbtn" onclick="showRoster()">View roster</button></div>
+      </div>
+      <div id="declAdjust" style="display:none">
+        <div class="wz-lbl">Children coming today</div>
+        <div class="num-wrap"><button class="nbtn" onclick="adjDecl('c',-1)">&#8722;</button><span class="nval" id="declC">0</span><button class="nbtn" onclick="adjDecl('c',1)">+</button></div>
+        <div class="decl-note">Expected: <span id="declCExpected"></span></div>
+        <div class="wz-lbl">Adults coming today</div>
+        <div class="num-wrap"><button class="nbtn" onclick="adjDecl('a',-1)">&#8722;</button><span class="nval" id="declA">0</span><button class="nbtn" onclick="adjDecl('a',1)">+</button></div>
+        <div class="decl-note">Expected: <span id="declAExpected"></span></div>
+        <div class="wz-center"><button class="wz-linkbtn" onclick="showRoster()">View roster</button></div>
+      </div>
     </div>
-    <!-- Amend trigger — visible button, only shown after first sign-in -->
-    <div class="amend-trigger-wrap" id="amendTriggerWrap" style="display:none">
-      <button class="amend-trigger" onclick="openAmend()">&#9998; Amend current numbers</button>
-    </div>
-    </div><!-- end actionTopSection -->
-    <!-- Inputs locked until action type selected -->
-    <div id="actionInputsLock" class="locked">
-      <div class="section-label">How many?</div>
+
+    <!-- STEP: how many right now -->
+    <div class="wz-panel" id="wzNum">
+      <div class="wz-sub" id="wzNumSub"></div>
       <div class="num-grid">
         <div class="num-group"><label>Children</label>
           <div class="num-wrap"><button class="nbtn" onclick="adj('c',-1)">&#8722;</button><span class="nval" id="nC">0</span><button class="nbtn" onclick="adj('c',1)">+</button></div>
         </div>
-        <!-- Item 16: Adults number OR chaperone checklist -->
         <div class="num-group" id="adultsNumGroup"><label>Adults</label>
           <div class="num-wrap"><button class="nbtn" onclick="adj('a',-1)">&#8722;</button><span class="nval" id="nA">0</span><button class="nbtn" onclick="adj('a',1)">+</button></div>
         </div>
       </div>
-      <!-- Everything below numbers should dim until numbers are entered -->
-      <div id="actionDetailsContainer" class="action-details-dimmed">
-      <!-- Chaperone checklist -->
-      <div id="chapSection" style="display:none"></div>
-      <!-- Principal field (pre-filled, primary) -->
-      <div class="field-group">
-        <label class="field-label">School representative</label>
-        <input class="field-input" id="txSignedBy" placeholder="Name of person handing over the group">
+      <div id="wzNumHint"></div>
+      <div class="wz-center" id="wzQuick"></div>
+      <div class="wz-center" id="wzNumRoster" style="display:none"><button class="wz-linkbtn" onclick="showRoster()">View roster</button></div>
+    </div>
+
+    <!-- STEP: chaperones -->
+    <div class="wz-panel" id="wzChap">
+      <div class="wz-sub">Tap anyone who has not arrived to untick them.</div>
+      <div id="chapSection"></div>
+      <div class="wz-adultsin" id="wzAdultsIn"></div>
+    </div>
+
+    <!-- STEP: check and sign in -->
+    <div class="wz-panel" id="wzConf">
+      <div class="wz-sum">
+        <div class="wz-row"><i>Children</i><b id="wzSumC">0</b></div>
+        <div class="wz-row"><i>Adults</i><b id="wzSumA">0</b></div>
+        <div class="wz-row"><i>Signed by</i><span><b id="wzSumBy"></b><u onclick="wzToggleEdit('wzByEdit')">change</u></span></div>
+        <div id="wzByEdit" class="wz-edit"><input class="field-input" id="txSignedBy" placeholder="Name of person handing over the group" oninput="wzFillSummary()"></div>
+        <div class="wz-row"><i>Processed by</i><span><b id="wzSumStaff"></b><u onclick="wzToggleEdit('wzStaffEdit')">change</u></span></div>
+        <div id="wzStaffEdit" class="wz-edit"><div class="chip-row" id="staffChipRow"></div></div>
+        <div class="wz-row"><i>Location</i><span><b id="wzSumLoc"></b><u onclick="wzToggleEdit('wzLocEdit')">change</u></span></div>
+        <div id="wzLocEdit" class="wz-edit"><div class="chip-row" id="locationChipRow"></div></div>
       </div>
-      <!-- Chips AFTER principal -->
-      <div class="chip-section">
-        <div class="chip-section-label">Processed by (B2P)</div>
-        <div class="chip-row" id="staffChipRow"></div>
-      </div>
-      <div class="chip-section">
-        <div class="chip-section-label">Location</div>
-        <div class="chip-row" id="locationChipRow"></div>
-      </div>
-      <!-- Notes with history accordion -->
-      <div class="field-group">
-        <label class="field-label">Notes <span class="field-label-opt">(optional)</span></label>
+      <div class="wz-center"><button class="wz-linkbtn" onclick="wzToggleEdit('wzNotesBox')">Add a note</button></div>
+      <div id="wzNotesBox" class="wz-edit" style="border-radius:14px">
         <textarea class="field-input" id="txNotes" placeholder="" autocorrect="off" autocapitalize="words" spellcheck="false"></textarea>
         <button class="note-history-toggle" onclick="toggleNoteHistory()">
           <span class="note-history-arrow" id="noteArrow">&#9654;</span>
@@ -469,19 +552,22 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
         <div class="note-history-list" id="noteHistoryList"></div>
       </div>
     </div>
-    <!-- Item 14: Activity log (collapsible) -->
-    <div class="activity-section" id="activitySection">
-      <button class="activity-toggle-btn" onclick="toggleActivityLog()">
-        <span>Activity so far</span>
-        <span id="activityChevron">&#9660;</span>
-      </button>
-      <div class="activity-entries" id="activityEntries"></div>
-    </div>
-    </div><!-- end actionDetailsContainer -->
   </div>
-  <div class="bottom-bar">
-    <button class="btn btn-secondary" style="width:76px" onclick="showView('home')">Cancel</button>
-    <button class="btn btn-primary" style="flex:1;font-size:17px" id="confirmBtn" onclick="doConfirm()">Confirm</button>
+
+  <div class="bottom-bar wz-bar">
+    <div class="wz-inner" id="wzBarCard" style="display:none">
+      <div class="wz-types">
+        <button class="wz-typebtn in" onclick="setType('in')">Sign in more</button>
+        <button class="wz-typebtn" onclick="setType('out')">Sign out</button>
+        <button class="wz-typebtn" onclick="setType('temp')">Temp out</button>
+        <button class="wz-typebtn" onclick="setType('return')">Return</button>
+      </div>
+      <button class="wz-secondary linkish" onclick="showView('home')">Back to schools</button>
+    </div>
+    <div class="wz-inner" id="wzBarMain" style="display:none">
+      <button class="wz-primary" id="confirmBtn" onclick="wzNext()">Next</button>
+      <button class="wz-secondary" id="wzSecondary" onclick="wzSecondary()">Back</button>
+    </div>
   </div>
 </div>
 <!-- AMEND (Item 9) -->
@@ -503,7 +589,7 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
     </div>
     <div class="field-group">
       <label class="field-label">Reason <span style="color:var(--red);font-weight:700">*</span></label>
-      <textarea class="field-input" id="amendReason" placeholder="e.g. Recount on arrival &#8212; 1 child collected by parent before sign-in" autocorrect="off" spellcheck="false" style="min-height:80px"></textarea>
+      <textarea class="field-input" id="amendReason" placeholder="e.g. Recount on arrival - 1 child collected by parent before sign-in" autocorrect="off" spellcheck="false" style="min-height:80px"></textarea>
     </div>
   </div>
   <div class="bottom-bar">
@@ -544,7 +630,7 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
     <div class="field-group"><label class="field-label">Staff Names <span class="field-label-opt">(comma-separated)</span></label><input class="field-input" id="aeStaffNames" placeholder="e.g. Jeff, Sarah, Keri"></div>
     <div class="sep"></div>
     <div class="section-label">Locations</div>
-    <div class="info-box">Location names appear as chips at the top of every sign-in screen. Each device operator taps their current location — this is logged on every action.</div>
+    <div class="info-box">Location names appear as chips at the top of every sign-in screen. Each device operator taps their current location, this is logged on every action.</div>
     <div class="field-group"><label class="field-label">Location Names <span class="field-label-opt">(comma-separated)</span></label><input class="field-input" id="aeLocationNames" placeholder="e.g. Main Entrance, Stage Door, Exit 2"></div>
     <input type="hidden" id="aeDeviceLocation">
     <div class="sep"></div>
@@ -608,61 +694,13 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
   </div>
 </div>
 
-<!-- v10: CONFIRM OVERLAY — gold glow (matches loading screen) -->
+<!-- v10: CONFIRM OVERLAY, gold glow (matches loading screen) -->
 <div id="confirmOverlay" class="co-overlay" onclick="dismissConfirmOverlay()">
   <div class="co-glow"></div>
   <div class="co-symbol">&#10003;</div>
   <div class="co-headline" id="coHeadline"></div>
   <div class="co-school" id="coSchool"></div>
   <div class="co-count" id="coCount"></div>
-</div>
-
-<!-- SESSION DECLARATION MODAL -->
-<div id="declModal" class="decl-modal">
-  <div class="decl-card" style="position:relative">
-    <!-- X cancel button top right -->
-    <button onclick="cancelDeclaration()" style="position:absolute;top:12px;right:12px;background:none;border:none;color:var(--text-3);font-size:22px;cursor:pointer;line-height:1;padding:4px 8px">&times;</button>
-    <div class="decl-title" id="declSchoolName"></div>
-    
-    <!-- Gate view (shown first) -->
-    <div id="declGate">
-      <div class="decl-subtitle" style="margin-bottom:14px">Expected arrivals:</div>
-      <div style="font-size:28px;font-weight:700;color:var(--text-1);text-align:center;margin-bottom:20px">
-        <span id="declGateC"></span> children · <span id="declGateA"></span> adults
-      </div>
-      <div style="font-size:14px;color:var(--text-2);text-align:center;margin-bottom:20px">Is this correct for today?</div>
-      <button class="decl-btn" onclick="proceedWithExpected()">Yes, continue to sign in</button>
-      <button class="decl-btn" style="background:var(--surface-2);color:var(--text-2);margin-top:8px" onclick="showAdjustNumbers()">No, adjust numbers</button>
-      <div style="text-align:center;margin-top:16px">
-        <button onclick="viewRosterFromDecl()" style="background:none;border:none;color:var(--text-3);font-size:13px;cursor:pointer;text-decoration:underline">👥 View roster first</button>
-      </div>
-      <div style="font-size:12px;color:var(--text-3);text-align:center;margin-top:10px;font-style:italic">(You can add details about absences or extras during sign-in)</div>
-    </div>
-    
-    <!-- Adjust view (shown if they tap "No, adjust") -->
-    <div id="declAdjust" style="display:none">
-      <div class="decl-subtitle">Adjust numbers if different from expected</div>
-      <div class="decl-field">
-        <label class="decl-label">Children arriving today</label>
-        <div class="num-wrap" style="margin-bottom:6px">
-          <button class="nbtn" onclick="adjDecl('c',-1)">&#8722;</button>
-          <span class="nval" id="declC">0</span>
-          <button class="nbtn" onclick="adjDecl('c',1)">+</button>
-        </div>
-        <div class="decl-note">Expected: <span id="declCExpected"></span></div>
-      </div>
-      <div class="decl-field">
-        <label class="decl-label">Adults arriving today</label>
-        <div class="num-wrap" style="margin-bottom:6px">
-          <button class="nbtn" onclick="adjDecl('a',-1)">&#8722;</button>
-          <span class="nval" id="declA">0</span>
-          <button class="nbtn" onclick="adjDecl('a',1)">+</button>
-        </div>
-        <div class="decl-note">Expected: <span id="declAExpected"></span></div>
-      </div>
-      <button class="decl-btn" onclick="confirmDeclaration()">Continue to sign in</button>
-    </div>
-  </div>
 </div>
 
 <!-- Extra Child Prompt Modal -->
@@ -729,7 +767,7 @@ const DEFAULT_SCHOOLS = [
 
 const DEFAULT_CFG = {
   eventName:"Shine on Stage",
-  eventSub:"Coventry \u00b7 19 Apr 2026",
+  eventSub:"Coventry, 19 Apr 2026",
   gasUrl:GAS_URL,
   driveFolderId:"1xijxxgvAmhPn5se_-NUKAQ3dF9admDMv",
   fireEmail:"b2pshineonstage@gmail.com",
@@ -750,7 +788,7 @@ let queue  = [];
 let stateVersion = 0;
 // Bump this string every time a new build is deployed, so the on-screen
 // tag lets you instantly confirm you're not looking at a stale cached copy.
-const BUILD_VERSION = "v11.1 \u2013 2026-11-02 10:05";
+const BUILD_VERSION = "v12.0 \u2013 2026-11-03 16:00";
 let returnToExtraChildPrompt = false;
 let pendingSignInConfirm = false;
 let editingChildIndex = null;
@@ -765,9 +803,11 @@ let coTimeout = null;
 let amendC = 0, amendA = 0;
 let chaperoneState = {};  // { name: {checked:bool, note:""} }
 let extraAdults = 0;      // unlisted chaperones beyond named ones
+let extraAdultsNote = "";
+var wz = {steps:[], i:0, fromCard:false, adjusting:false, chapInit:false, hasChap:false, sec:null};
 
 function blank() {
-  return {cIn:0,aIn:0,tempC:0,tempA:0,totCIn:0,totAIn:0,totCOut:0,totAOut:0,declaredC:null,declaredA:null,expectedC:null,expectedA:null,extraChildren:[]};
+  return {cIn:0,aIn:0,tempC:0,tempA:0,totCIn:0,totAIn:0,totCOut:0,totAOut:0,declaredC:null,declaredA:null,expectedC:null,expectedA:null,extraChildren:[],chapsIn:[]};
 }
 
 // =============================================================
@@ -837,7 +877,7 @@ function saveQueue() {
 }
 
 // =============================================================
-//  GAS  — secondary, cross-device sync
+//  GAS , secondary, cross-device sync
 // =============================================================
 function setSyncDot(s) {
   const d = document.getElementById("syncDot");
@@ -1072,9 +1112,9 @@ function renderHome() {
       if (s.arrivalTime) pills += "<span class=\"pill pill-default\" style=\"color:var(--text-3)\">⏱ " + esc(s.arrivalTime) + "</span>";
     }
     else {
-      pills += "<span class=\"pill pill-gold\">" + st.cIn + " children in</span>";
-      pills += "<span class=\"pill pill-gold\">" + st.aIn + " adults in</span>";
-      if (st.tempC > 0) pills += "<span class=\"pill pill-amber\">" + st.tempC + " temp out</span>";
+      pills += "<span class=\"pill pill-gold\"><b>" + st.cIn + "</b> children in</span>";
+      pills += "<span class=\"pill pill-gold\"><b>" + st.aIn + "</b> " + (st.aIn === 1 ? "adult" : "adults") + " in</span>";
+      if (st.tempC > 0) pills += "<span class=\"pill pill-amber\"><b>" + st.tempC + "</b> temp out</span>";
       if (allOut) pills += "<span class=\"pill pill-green\">\u2713 All signed out</span>";
     }
     
@@ -1104,9 +1144,12 @@ function renderHome() {
       var labels = {in:"Signed in",out:"Signed out",temp:"Temp out",return:"Return",amend:"Amended"};
       var summary = (labels[lastTx.type]||lastTx.type);
       if (lastTx.type !== "amend") summary += ": " + lastTx.c + "C + " + lastTx.a + "A";
-      lastLine = "<div class=\"last-action-line\">Last: " + summary + " \u00b7 " + tStr + "</div>";
+      lastLine = "<div class=\"last-action-line\">Last: " + summary + ", " + tStr + "</div>";
     }
-    return "<div class=\"" + cls + "\" onclick=\"openAction(" + s.id + ")\"><div class=\"school-name\">" + esc(s.name) + "</div>" + townLine + "<div class=\"stat-pills\">" + pills + statusEmoji + "</div>" + lastLine + "</div>";
+    var expLine = arrived ? "" : "<div class=\"school-expect\">Expecting <b>" + (parseInt(s.performers) || 0) + "</b> children, <b>" + (parseInt(s.chaperones) || 0) + "</b> " + ((parseInt(s.chaperones) || 0) === 1 ? "adult" : "adults") + "</div>";
+    var metaInner = metaHTML(s);
+    var metaLine = metaInner ? "<div class=\"school-meta\">" + metaInner + "</div>" : "";
+    return "<div class=\"" + cls + "\" onclick=\"openAction(" + s.id + ")\"><div class=\"school-name\">" + esc(s.name) + "</div>" + townLine + expLine + "<div class=\"stat-pills\">" + pills + statusEmoji + "</div>" + metaLine + lastLine + "</div>";
   }).join("");
 }
 
@@ -1119,25 +1162,9 @@ function allSignedOut() {
 // =============================================================
 //  ACTION  (Items 3, 5, 6, 9, 10, 14, 15, 16)
 // =============================================================
-function resetActionUI() {
-  // Re-lock inputs (Item 3)
-  document.getElementById("actionInputsLock").classList.add("locked");
-  // Remove type button selections
-  document.querySelectorAll(".type-btn").forEach(function(b) { b.classList.remove("selected"); });
-  document.querySelector(".type-grid").classList.remove("dimmed");
-  // Remove top section dimming
-  var topSection = document.getElementById("actionTopSection");
-  if (topSection) topSection.classList.remove("action-top-dimmed");
-  // Re-dim details section for next action
-  var container = document.getElementById("actionDetailsContainer");
-  if (container) container.classList.add("action-details-dimmed");
-  // Reset chaperone UI
-  document.getElementById("adultsNumGroup").style.display = "";
-  document.getElementById("chapSection").style.display = "none";
-  document.getElementById("chapSection").innerHTML = "";
-}
+function resetActionUI() { /* v12: replaced by the step by step screens (wzRender) */ }
 
-// Location chips — tap to set current device location
+// Location chips, tap to set current device location
 function renderLocationChips() {
   var wrap = document.getElementById("locationChipRow");
   if (!wrap) return;
@@ -1157,6 +1184,7 @@ function renderLocationChips() {
 function selectLocationChip(loc) {
   activeDeviceLocation = loc;
   renderLocationChips();
+  wzFillSummary();
 }
 
 // Note history accordion
@@ -1194,72 +1222,37 @@ function renderNoteHistory(schoolId) {
     var typeLabels = {in:"Sign in",out:"Sign out",temp:"Temp out",return:"Return",amend:"Amend"};
     var typeLabel = typeLabels[t.type] || t.type;
     return "<div style=\"margin-bottom:8px;padding-bottom:8px;border-bottom:0.5px solid var(--border-3)\">" +
-      "<div style=\"font-size:11px;color:var(--text-3)\">" + time + " · " + typeLabel + "</div>" +
+      "<div style=\"font-size:11px;color:var(--text-3)\">" + time + ", " + typeLabel + "</div>" +
       "<div style=\"margin-top:2px;color:var(--text-2)\">" + esc(t.notes) + "</div>" +
       "</div>";
   }).join("");
 }
 
 // Session declaration modal
-function showDeclarationModal() {
-  var sc = cfg.schools.find(function(s) { return s.id === curSid; });
-  if (!sc) return;
-  
-  var expectedC = parseInt(sc.performers) || 0;
-  var expectedA = parseInt(sc.chaperones) || 0;
-  
-  document.getElementById("declSchoolName").textContent = sc.name;
-  
-  // Gate view - show expected numbers
-  document.getElementById("declGateC").textContent = expectedC;
-  document.getElementById("declGateA").textContent = expectedA;
-  
-  // Adjust view - pre-fill inputs
-  document.getElementById("declC").textContent = expectedC;
-  document.getElementById("declA").textContent = expectedA;
-  document.getElementById("declCExpected").textContent = expectedC;
-  document.getElementById("declAExpected").textContent = expectedA;
-  
-  // Show gate view, hide adjust view
-  document.getElementById("declGate").style.display = "";
-  document.getElementById("declAdjust").style.display = "none";
-  
-  document.getElementById("declModal").classList.add("show");
-}
+function showDeclarationModal() { /* v12: the contingent check is now step 1 of the sign in (wzRender) */ }
 
-function cancelDeclaration() {
-  document.getElementById("declModal").classList.remove("show");
-}
+function cancelDeclaration() { wzExit(); }
 
-function viewRosterFromDecl() {
-  document.getElementById("declModal").classList.remove("show");
-  showRoster();
-}
+function viewRosterFromDecl() { showRoster(); }
 
 function proceedWithExpected() {
-  var sc = cfg.schools.find(function(s) { return s.id === curSid; });
+  var sc = schoolById(curSid);
   if (!sc) return;
-  
-  // Use expected numbers as declared
   if (!states[curSid]) states[curSid] = blank();
-  states[curSid].declaredC = parseInt(sc.performers) || 0;
-  states[curSid].declaredA = parseInt(sc.chaperones) || 0;
-  
-  // Update number fields with declared amounts
-  nC = states[curSid].declaredC;
-  nA = states[curSid].declaredA;
-  document.getElementById("nC").textContent = nC;
-  document.getElementById("nA").textContent = nA;
-  
-  document.getElementById("declModal").classList.remove("show");
+  // Use the numbers shown on screen (expected, or already-declared if the user came back)
+  states[curSid].declaredC = parseInt(document.getElementById("declGateC").textContent) || 0;
+  states[curSid].declaredA = parseInt(document.getElementById("declGateA").textContent) || 0;
+  wzInitNumbers();
   updateStatus();
-  setType("in");
+  wz.i++;
+  wzRender();
 }
 
 function showAdjustNumbers() {
-  // Switch to adjust view
-  document.getElementById("declGate").style.display = "none";
-  document.getElementById("declAdjust").style.display = "";
+  wz.adjusting = true;
+  document.getElementById("declC").textContent = parseInt(document.getElementById("declGateC").textContent) || 0;
+  document.getElementById("declA").textContent = parseInt(document.getElementById("declGateA").textContent) || 0;
+  wzRender();
 }
 
 function adjDecl(field, delta) {
@@ -1272,35 +1265,22 @@ function adjDecl(field, delta) {
 function confirmDeclaration() {
   var declC = parseInt(document.getElementById("declC").textContent) || 0;
   var declA = parseInt(document.getElementById("declA").textContent) || 0;
-  
   if (!states[curSid]) states[curSid] = blank();
   states[curSid].declaredC = declC;
   states[curSid].declaredA = declA;
-  
   // Store expected numbers if not already set (for discrepancy tracking)
-  var sc = cfg.schools.find(function(s) { return s.id === curSid; });
+  var sc = schoolById(curSid);
   if (states[curSid].expectedC === null) states[curSid].expectedC = parseInt(sc.performers) || null;
   if (states[curSid].expectedA === null) states[curSid].expectedA = parseInt(sc.chaperones) || null;
-  
-  document.getElementById("declModal").classList.remove("show");
-  
-  // Update number fields with declared amounts
-  nC = states[curSid].declaredC;
-  nA = states[curSid].declaredA;
-  document.getElementById("nC").textContent = nC;
-  document.getElementById("nA").textContent = nA;
-  
-  // Check for extra children discrepancy
+  wz.adjusting = false;
+  nC = declC;
   var extraChildren = extraChildrenStillNeeded();
-  
-  if (extraChildren > 0) {
-    // Show extra child prompt
-    showExtraChildPrompt(extraChildren);
-  } else {
-    // Proceed normally
-    updateStatus();
-    setType("in");
-  }
+  wzInitNumbers();
+  updateStatus();
+  wz.i++;
+  wzRender();
+  // Extra children discrepancy: prompt sits over the next step
+  if (extraChildren > 0) showExtraChildPrompt(extraChildren);
 }
 
 // Works out how many extra children still need an emergency-register entry,
@@ -1308,7 +1288,7 @@ function confirmDeclaration() {
 // actually signed in more than declared) and subtracting anything already
 // registered or explicitly deferred by staff via "I'll Do This Later".
 // Raw count of children still needing registration, ignoring any deferral.
-// Used for the pulsing reminder icon — deferring lets sign-in proceed, but
+// Used for the pulsing reminder icon, deferring lets sign-in proceed, but
 // it should NOT make the reminder disappear; only actually adding the
 // details should do that.
 function extraChildrenRawUnregistered() {
@@ -1322,7 +1302,7 @@ function extraChildrenRawUnregistered() {
   return Math.max(fromDeclaration, fromActualSignIn, 0) - alreadyRegistered;
 }
 
-// Deferred-adjusted count — this is what actually gates whether sign-in
+// Deferred-adjusted count, this is what actually gates whether sign-in
 // confirmation is blocked. Deferring reduces this to 0 (or the remaining
 // gap if it's grown since), even though the raw count above stays visible.
 function extraChildrenStillNeeded() {
@@ -1357,7 +1337,6 @@ function closeExtraChildPrompt() {
     if (totalNeeded > (st.extraChildrenDeferred || 0)) st.extraChildrenDeferred = totalNeeded;
   }
   updateStatus();
-  setType("in");
   if (pendingSignInConfirm) {
     pendingSignInConfirm = false;
     setTimeout(function() { doConfirm(); }, 50);
@@ -1367,22 +1346,14 @@ function closeExtraChildPrompt() {
 function addChildFromPrompt() {
   document.getElementById("extraChildPrompt").classList.remove("show");
   updateStatus();
-  setType("in");
-  // Small delay to ensure action modal is visible, then open add child form
-  setTimeout(function() {
-    showAddChildForm();
-  }, 100);
+  setTimeout(function() { showAddChildForm(); }, 100);
 }
 
 function viewRosterFromPrompt() {
   document.getElementById("extraChildPrompt").classList.remove("show");
   returnToExtraChildPrompt = true;
   updateStatus();
-  setType("in");
-  // Small delay to ensure action modal is visible, then show roster
-  setTimeout(function() {
-    showRoster();
-  }, 100);
+  setTimeout(function() { showRoster(); }, 100);
 }
 
 // Render stat line - inline text showing current status
@@ -1431,7 +1402,7 @@ function renderStatLine(sc, st) {
   if (inside === 0 && st.totCIn === 0 && st.totAIn === 0) {
     // Before any activity
     if (expectedC !== null && expectedA !== null) {
-      return "<span class=\"stat-line\">" + expectedC + " children · " + expectedA + " adults expected" + discrepIcon + statusEmoji + "</span>";
+      return "<span class=\"stat-line\">" + expectedC + " children, " + expectedA + " adults expected" + discrepIcon + statusEmoji + "</span>";
     } else if (expectedC !== null) {
       return "<span class=\"stat-line\">" + expectedC + " children expected" + discrepIcon + statusEmoji + "</span>";
     } else {
@@ -1446,80 +1417,52 @@ function renderStatLine(sc, st) {
     if (expectedA !== null) parts.push(st.aIn + " of " + expectedA + " adults");
     else if (st.aIn > 0) parts.push(st.aIn + " adults");
     
-    return "<span class=\"stat-line" + liveClass + "\">" + parts.join(" · ") + tempNote + discrepIcon + statusEmoji + "</span>";
+    return "<span class=\"stat-line" + liveClass + "\">" + parts.join(", ") + tempNote + discrepIcon + statusEmoji + "</span>";
   }
 }
 
 function openAction(id) {
   curSid = id; curType = null;
-  
-  // Auto-populate with declared amounts on first sign-in
-  var st = states[id] || blank();
-  if (st.totCIn === 0 && st.declaredC !== null) {
-    nC = st.declaredC;
-  } else {
-    nC = 0;
-  }
-  if (st.totAIn === 0 && st.declaredA !== null) {
-    nA = st.declaredA;
-  } else {
-    nA = 0;
-  }
-  
-  chaperoneState = {};
-  extraAdults = 0;
-  resetActionUI();
+  chaperoneState = {}; extraAdults = 0; extraAdultsNote = "";
+  nC = 0; nA = 0;
+  wz.adjusting = false; wz.chapInit = false;
 
-  var sc = cfg.schools.find(function(s) { return s.id === id; });
+  var sc = schoolById(id);
   var st = states[id] || blank();
   var hasBeen = st.totCIn > 0 || st.totAIn > 0;
 
-  // School name + info
   document.getElementById("aName").textContent = sc.name;
   var infoParts = [];
   if (sc.town)      infoParts.push(sc.town);
   if (sc.principal) infoParts.push(sc.principal);
   if (sc.tel)       infoParts.push(sc.tel);
-  document.getElementById("aInfoLine").textContent = infoParts.join(" \u00b7 ");
-
-  // Stat line
+  document.getElementById("aInfoLine").textContent = infoParts.join(", ");
+  document.getElementById("aMeta").innerHTML = metaHTML(sc);
   document.getElementById("aStatLine").innerHTML = renderStatLine(sc, st);
-  
-  // Reset discrepancy details panel (close it if it was open from previous school)
   document.getElementById("discrepDetails").style.display = "none";
-  
-  // Show/hide View Roster button
-  if (sc.roster && sc.roster.length > 0) {
-    document.getElementById("viewRosterBtn").style.display = "";
-  } else {
-    document.getElementById("viewRosterBtn").style.display = "none";
-  }
+  document.getElementById("viewRosterBtn").style.display = (sc.roster && sc.roster.length > 0) ? "" : "none";
 
-  // Inputs — display auto-populated numbers, clear notes
-  document.getElementById("nC").textContent = nC;
-  document.getElementById("nA").textContent = nA;
   document.getElementById("txNotes").value = "";
-  // Pre-fill principal
   document.getElementById("txSignedBy").value = sc.principal || "";
-  document.getElementById("confirmBtn").textContent = "Confirm";
-
-  // Amend trigger
+  document.getElementById("wzNotesBox").classList.remove("open");
+  document.getElementById("wzByEdit").classList.remove("open");
   document.getElementById("amendTriggerWrap").style.display = hasBeen ? "" : "none";
 
-  // Chips + note history
   renderStaffChips();
   renderLocationChips();
   renderNoteHistory(id);
 
-  // Item 14: Activity log
   var entries = txLog.filter(function(t) { return t.schoolId === id; });
   document.getElementById("activitySection").style.display = entries.length > 0 ? "" : "none";
   document.getElementById("activityEntries").classList.remove("open");
-  document.getElementById("activityChevron").textContent = "\u25bc";
+  document.getElementById("activityChevron").textContent = "▼";
   document.getElementById("activityEntries").innerHTML = renderActivityEntries(id);
 
-  updateStatus();
+  wz.fromCard = hasBeen;
   showView("action");
+  updateStatus();
+  if (hasBeen) { wzShowCard(); }
+  else { setType("in"); }   // first arrival goes straight into the sign in steps
 }
 
 // Discrepancy panel functions
@@ -1615,7 +1558,7 @@ function closeAddChildModal() {
     editingChildIndex = null;
     return;
   }
-  // "Skip for now" on this form — defer whatever's still outstanding rather
+  // "Skip for now" on this form, defer whatever's still outstanding rather
   // than silently forgetting it, and resume the sign-in if one was waiting.
   if (curSid && states[curSid]) {
     var stillNeeded = extraChildrenStillNeeded();
@@ -1697,7 +1640,7 @@ function saveChildDetails() {
   if (!states[curSid].extraChildren) states[curSid].extraChildren = [];
 
   // Editing an already-registered child (e.g. medical details arriving
-  // later) — update that entry in place and stop, no looping/deferral.
+  // later), update that entry in place and stop, no looping/deferral.
   if (editingChildIndex !== null) {
     states[curSid].extraChildren[editingChildIndex] = {
       name: name || "Name not provided",
@@ -1727,7 +1670,7 @@ function saveChildDetails() {
 
   var stillNeeded = extraChildrenStillNeeded();
   if (stillNeeded > 0) {
-    // More children still need details — clear the form and stay open
+    // More children still need details, clear the form and stay open
     // rather than closing after only the first one.
     document.getElementById("childName").value = "";
     document.getElementById("childPhone").value = "";
@@ -1735,7 +1678,7 @@ function saveChildDetails() {
     var title = document.getElementById("addChildModalTitle");
     var doneCount = states[curSid].extraChildren.length;
     if (title) title.textContent = "Extra Child Details (" + (doneCount + 1) + " of " + (doneCount + stillNeeded) + ")";
-    toast("Saved \u2014 " + stillNeeded + " more to add", "success");
+    toast("Saved, " + stillNeeded + " more to add", "success");
     return;
   }
 
@@ -1757,68 +1700,32 @@ function updateStatus() {
 }
 
 function setType(t) {
-  // First sign-in check: if no activity yet and no declaration, show modal first
-  if (t === "in") {
-    var st = states[curSid] || blank();
-    if (st.totCIn === 0 && st.totAIn === 0 && st.declaredC === null) {
-      showDeclarationModal();
-      return;
-    }
-  }
-  
   curType = t;
-  // Item 3: Unlock inputs
-  document.getElementById("actionInputsLock").classList.remove("locked");
-  document.querySelector(".type-grid").classList.add("dimmed");
-  // Dim everything above numbers to focus on number inputs
-  var topSection = document.getElementById("actionTopSection");
-  if (topSection) topSection.classList.add("action-top-dimmed");
-  
-  // Update type button
-  document.querySelectorAll(".type-btn").forEach(function(b) { b.classList.remove("selected"); });
-  document.querySelector(".tbtn-" + t).classList.add("selected");
-  // Item 16: Chaperone list — always keep Adults input visible;
-  // if named chaperones exist for sign-in, show checklist below that auto-updates the count
-  var sc = cfg.schools.find(function(s) { return s.id === curSid; });
-  var hasChaps = sc && sc.chaperoneNames && sc.chaperoneNames.trim();
-  document.getElementById("adultsNumGroup").style.display = "";  // always visible
-  if (t === "in" && hasChaps) {
-    var chapSec = document.getElementById("chapSection");
-    chapSec.style.display = "";
-    var names = sc.chaperoneNames.split(",").map(function(n){return n.trim();}).filter(function(n){return n;});
-    names.forEach(function(name) { if (!chaperoneState[name]) chaperoneState[name] = {checked:false,note:""}; });
-    extraAdults = 0;
-    chapSec.innerHTML = "<span class=\"chap-label\">Named chaperones <span style=\"font-weight:400;color:var(--text-3);text-transform:none;letter-spacing:0\">(tick to confirm present \u2014 updates adult count)</span></span><div id=\"chapList\">" + renderChaperoneList(sc) + "</div>";
-    // If declared adults matches named chaperones count, pre-tick all and set nA
-    var st = states[curSid] || blank();
-    if (st.declaredA !== null && st.declaredA === names.length) {
-      names.forEach(function(name) { chaperoneState[name] = {checked:true,note:""}; });
-      nA = st.declaredA;
-    } else {
-      nA = st.declaredA !== null ? st.declaredA : 0;
-    }
-    document.getElementById("nA").textContent = nA;
-    if (document.getElementById("chapList")) document.getElementById("chapList").innerHTML = renderChaperoneList(sc);
-  } else {
-    document.getElementById("chapSection").style.display = "none";
-    document.getElementById("chapSection").innerHTML = "";
-    extraAdults = 0;
-  }
-  var labels = {in:"\u2705 Confirm Sign In",out:"Confirm Sign Out",temp:"Confirm Temp Out",return:"Confirm Return"};
-  document.getElementById("confirmBtn").textContent = labels[t];
+  var sc = schoolById(curSid);
+  var st = states[curSid] || blank();
+  chaperoneState = {}; extraAdults = 0; extraAdultsNote = "";
+  var unsigned = namedChaps(sc).filter(function(n) { return (st.chapsIn || []).indexOf(n) < 0; });
+  wz.hasChap = (t === "in" && unsigned.length > 0);
+  wz.chapInit = false;
+  wz.adjusting = false;
+  var steps = [];
+  if (t === "in" && st.declaredC === null) steps.push("decl");
+  steps.push("num");
+  if (wz.hasChap) steps.push("chap");
+  steps.push("conf");
+  wz.steps = steps;
+  wz.i = 0;
+  wzInitNumbers();
+  wzRender();
 }
 
 function adj(f, d) {
   if (f === "c") { nC = Math.max(0, (parseInt(nC) || 0) + d); document.getElementById("nC").textContent = nC; }
   else           { nA = Math.max(0, (parseInt(nA) || 0) + d); document.getElementById("nA").textContent = nA; }
-  // Brighten details below when numbers entered
-  var container = document.getElementById("actionDetailsContainer");
-  if (container && (nC > 0 || nA > 0)) {
-    container.classList.remove("action-details-dimmed");
-  }
+  wzNumHint();
 }
 
-// Staff chips — processed by (B2P), no "Other" option
+// Staff chips, processed by (B2P), no "Other" option
 function renderStaffChips() {
   var row = document.getElementById("staffChipRow");
   if (!cfg.staffNames || cfg.staffNames.length === 0) { row.innerHTML = ""; return; }
@@ -1831,6 +1738,7 @@ function renderStaffChips() {
 function selectStaffChip(name) {
   activeStaffName = name;
   renderStaffChips();
+  wzFillSummary();
 }
 
 // Item 15: Confirm modal with staff name
@@ -1846,8 +1754,7 @@ function doConfirm() {
   if (curType === "return" && nC > st.tempC) { toast("Only " + st.tempC + " children temp out", "err"); return; }
 
   // Catch children being signed in beyond what was declared, even if that
-  // wasn't apparent at declaration time (e.g. staff enters a higher number
-  // here than was originally agreed). Without this, extra children get
+  // wasn't apparent at declaration time. Without this, extra children get
   // counted in the total but never get an emergency-register entry.
   if (curType === "in" && st.declaredC !== null) {
     var stillUnaccounted = extraChildrenStillNeeded();
@@ -1857,30 +1764,8 @@ function doConfirm() {
       return;
     }
   }
-
-  var sc    = cfg.schools.find(function(s) { return s.id === curSid; });
-  var lbls  = {in:"Sign In",out:"Sign Out",temp:"Temporary Out",return:"Return"};
-  var by    = document.getElementById("txSignedBy").value.trim();
-  var notes = document.getElementById("txNotes").value.trim();
-
-  document.getElementById("mTitle").textContent = lbls[curType];
-  document.getElementById("mBody").textContent  = nC + " children + " + nA + " adults \u2014 " + sc.name + (notes ? "\nNote: " + notes : "");
-
-  // Always restore Cancel + Confirm — defensive reset in case any prior
-  // modal use (e.g. accidental roster tap) left a different button in place
-  document.querySelector(".modal-actions").innerHTML =
-    "<button class=\"btn btn-secondary\" style=\"flex:1\" onclick=\"closeModal()\">Cancel</button>" +
-    "<button class=\"btn btn-primary\" style=\"flex:1\" onclick=\"execAction()\">Confirm</button>";
-
-  // Item 15: Staff name display
-  var staffEl = document.getElementById("mStaff");
-  if (by) {
-    staffEl.style.display = "flex";
-    staffEl.innerHTML = "<span>\ud83d\udc64 " + esc(by) + "</span><button onclick=\"changeStaff()\" style=\"background:none;border:none;color:var(--text-3);font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;text-decoration:underline;padding:0\">Not you?</button>";
-  } else {
-    staffEl.style.display = "none";
-  }
-  document.getElementById("modal").classList.add("active");
+  // v12: the "Check and sign in" screen is the confirmation, so there is no second pop-up
+  execAction();
 }
 
 function changeStaff() {
@@ -1943,6 +1828,18 @@ async function execAction() {
       }
     }
 
+    // v12: remember which named chaperones are now signed in, and note any other adults
+    if (curType === "in") {
+      st.chapsIn = st.chapsIn || [];
+      Object.keys(chaperoneState).forEach(function(n) {
+        if (chaperoneState[n].checked && st.chapsIn.indexOf(n) < 0) st.chapsIn.push(n);
+      });
+      if (extraAdults > 0 && extraAdultsNote && extraAdultsNote.trim()) {
+        var oa = "Other adults: " + extraAdultsNote.trim();
+        notes = notes ? notes + ". " + oa : oa;
+      }
+    }
+
     var tx = {
       id:Date.now(), ts:new Date().toISOString(),
       schoolId:curSid, schoolName:sc.name,
@@ -1967,7 +1864,7 @@ async function execAction() {
   }
 }
 
-// Confirmation overlay — all gold, only headline text changes
+// Confirmation overlay, all gold, only headline text changes
 function showConfirmOverlay(type, schoolName, c, a) {
   var headlines = {
     in:     "SIGNED IN",
@@ -1980,7 +1877,7 @@ function showConfirmOverlay(type, schoolName, c, a) {
   var el = document.getElementById("confirmOverlay");
   document.getElementById("coHeadline").textContent = headline;
   document.getElementById("coSchool").textContent = schoolName;
-  document.getElementById("coCount").textContent = c + " children \u00b7 " + a + " adults";
+  document.getElementById("coCount").textContent = c + " children, " + a + " adults";
   if (coTimeout) clearTimeout(coTimeout);
   el.classList.add("show");
   coTimeout = setTimeout(function() {
@@ -2005,7 +1902,7 @@ function openAmend() {
   amendC = st.cIn;
   amendA = st.aIn;
   document.getElementById("amendSchoolName").textContent = sc.name;
-  document.getElementById("amendCurrentCounts").textContent = "Currently recorded: " + st.cIn + " children \u00b7 " + st.aIn + " adults inside";
+  document.getElementById("amendCurrentCounts").textContent = "Currently recorded: " + st.cIn + " children, " + st.aIn + " adults inside";
   document.getElementById("amendC").textContent = amendC;
   document.getElementById("amendA").textContent = amendA;
   document.getElementById("amendReason").value = "";
@@ -2025,7 +1922,7 @@ async function doAmendConfirm() {
   if (!reason) { toast("A reason is required for amendments", "err"); return; }
   var st = states[curSid] || blank();
   var prevC = st.cIn, prevA = st.aIn;
-  if (amendC === prevC && amendA === prevA) { toast("No change \u2014 counts are the same", "err"); return; }
+  if (amendC === prevC && amendA === prevA) { toast("No change, counts are the same", "err"); return; }
   isWriting = true;
   try {
     var sc = cfg.schools.find(function(s) { return s.id === curSid; });
@@ -2047,7 +1944,7 @@ async function doAmendConfirm() {
     txLog.push(tx);
     await persist();
     gasPost({action:"log", ts:tx.ts, schoolName:sc.name, type:"amend", c:amendC, a:amendA,
-      notes:"Amended " + prevC + "C/" + prevA + "A \u2192 " + amendC + "C/" + amendA + "A \u2014 " + reason,
+      notes:"Amended " + prevC + "C/" + prevA + "A \u2192 " + amendC + "C/" + amendA + "A, " + reason,
       signedBy:by, processedBy:by, deviceLocation:tx.deviceLocation});
     showConfirmOverlay("amend", sc.name, amendC, amendA);
   } finally {
@@ -2067,7 +1964,7 @@ function renderActivityEntries(sid) {
     var dt = new Date(t.ts);
     var tStr = dt.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
     return "<div class=\"activity-entry\">" +
-      "<div class=\"ae-time\">" + tStr + " \u2014 <span style=\"color:" + (cols[t.type]||"var(--text-3)") + ";\">" + (labels[t.type]||t.type) + "</span></div>" +
+      "<div class=\"ae-time\">" + tStr + ", <span style=\"color:" + (cols[t.type]||"var(--text-3)") + ";\">" + (labels[t.type]||t.type) + "</span></div>" +
       "<div class=\"ae-detail\">" + t.c + " children + " + t.a + " adults</div>" +
       (t.signedBy ? "<div class=\"ae-by\">Signed by: " + esc(t.signedBy) + "</div>" : "") +
       (t.notes    ? "<div class=\"ae-note\">" + esc(t.notes) + "</div>" : "") +
@@ -2085,40 +1982,46 @@ function toggleActivityLog() {
 
 // Item 16: Chaperone checklist
 function renderChaperoneList(sc) {
-  if (!sc.chaperoneNames || !sc.chaperoneNames.trim()) return "";
-  var names = sc.chaperoneNames.split(",").map(function(n){return n.trim();}).filter(function(n){return n;});
-  // Use data-chapname attribute to avoid JSON.stringify inside onclick (causes HTML attribute quote mismatch)
-  return names.map(function(name) {
-    var s = chaperoneState[name] || {checked:false,note:""};
-    return "<div class=\"chap-item\">" +
-      "<div class=\"chap-check " + (s.checked ? "checked" : "") + "\" data-chapname=\"" + esc(name) + "\" onclick=\"toggleChap(this)\">" + (s.checked ? "\u2713" : "") + "</div>" +
-      "<div style=\"flex:1\">" +
-        "<div class=\"chap-name\">" + esc(name) + "</div>" +
-        (s.checked ? "<div class=\"chap-note-wrap\"><input class=\"chap-note-input\" data-chapname=\"" + esc(name) + "\" placeholder=\"Note (optional)\" value=\"" + esc(s.note) + "\" oninput=\"updateChapNote(this)\"></div>" : "") +
-      "</div>" +
-    "</div>";
-  }).join("") +
-  // Extra adults counter — for chaperones that weren't pre-listed
-  "<div style=\"display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--border);margin-top:6px\">" +
-    "<div style=\"font-size:13px;color:var(--text-3);flex:1\">Additional unlisted adult(s)</div>" +
-    "<div class=\"num-wrap\" style=\"width:120px\">" +
-      "<button class=\"nbtn\" style=\"font-size:22px;width:40px;height:44px\" onclick=\"adjExtraAdults(-1)\">\u2212</button>" +
-      "<span class=\"nval\" id=\"extraAdultsVal\" style=\"font-size:22px\">" + (extraAdults||0) + "</span>" +
-      "<button class=\"nbtn\" style=\"font-size:22px;width:40px;height:44px\" onclick=\"adjExtraAdults(1)\">+</button>" +
+  var names = Object.keys(chaperoneState);
+  var html = names.map(function(name) {
+    var s = chaperoneState[name];
+    var noteBit = "";
+    if (s.checked) {
+      if (s.open || s.note) {
+        noteBit = "";
+      } else {
+        noteBit = "<span class=\"nt\" data-chapname=\"" + esc(name) + "\" onclick=\"event.stopPropagation();openChapNote(this)\">note</span>";
+      }
+    }
+    var row = "<div class=\"wz-chap" + (s.checked ? " on" : "") + "\" data-chapname=\"" + esc(name) + "\" onclick=\"toggleChap(this)\">" +
+      "<div class=\"box\">" + (s.checked ? "✓" : "") + "</div>" +
+      "<div class=\"nm\">" + esc(name) + "</div>" + noteBit + "</div>";
+    if (s.checked && (s.open || s.note)) {
+      row += "<div class=\"wz-chapnote\"><input data-chapname=\"" + esc(name) + "\" placeholder=\"Note (optional)\" value=\"" + esc(s.note) + "\" oninput=\"updateChapNote(this)\"></div>";
+    }
+    return row;
+  }).join("");
+  html += "<div class=\"wz-others\">" +
+    "<div class=\"wz-lbl\">Other adults (not chaperones)</div>" +
+    "<div class=\"num-wrap\">" +
+      "<button class=\"nbtn\" onclick=\"adjExtraAdults(-1)\">−</button>" +
+      "<span class=\"nval\" id=\"extraAdultsVal\">" + (extraAdults || 0) + "</span>" +
+      "<button class=\"nbtn\" onclick=\"adjExtraAdults(1)\">+</button>" +
     "</div>" +
+    ((extraAdults || 0) > 0
+      ? "<div style=\"margin-top:10px\"><input class=\"wz-otherinput\" id=\"extraAdultsNoteInput\" placeholder=\"Who? e.g. DBS officer, side of stage only\" value=\"" + esc(extraAdultsNote) + "\" oninput=\"extraAdultsNote=this.value\"></div>"
+      : "") +
   "</div>";
+  return html;
 }
 
 function toggleChap(el) {
   var name = el.dataset.chapname;
-  if (!name) return;
-  if (!chaperoneState[name]) chaperoneState[name] = {checked:false,note:""};
+  if (!name || !chaperoneState[name]) return;
   chaperoneState[name].checked = !chaperoneState[name].checked;
-  if (!chaperoneState[name].checked) chaperoneState[name].note = "";
+  if (!chaperoneState[name].checked) { chaperoneState[name].note = ""; chaperoneState[name].open = false; }
   recalcAdultsFromChaps();
-  var sc = cfg.schools.find(function(s){return s.id===curSid;});
-  var list = document.getElementById("chapList");
-  if (list) list.innerHTML = renderChaperoneList(sc);
+  wzDrawChaps();
 }
 
 function updateChapNote(inp) {
@@ -2129,16 +2032,16 @@ function updateChapNote(inp) {
 }
 
 function adjExtraAdults(d) {
-  extraAdults = Math.max(0, (extraAdults||0) + d);
-  var el = document.getElementById("extraAdultsVal");
-  if (el) el.textContent = extraAdults;
+  extraAdults = Math.max(0, (extraAdults || 0) + d);
   recalcAdultsFromChaps();
+  wzDrawChaps();
 }
 
 function recalcAdultsFromChaps() {
-  var checked = Object.values(chaperoneState).filter(function(s){return s.checked;}).length;
-  nA = checked + (extraAdults||0);
-  document.getElementById("nA").textContent = nA;
+  var checked = Object.keys(chaperoneState).filter(function(n) { return chaperoneState[n].checked; }).length;
+  nA = checked + (extraAdults || 0);
+  var el = document.getElementById("nA"); if (el) el.textContent = nA;
+  var ai = document.getElementById("wzAdultsIn"); if (ai) ai.innerHTML = "Adults in: <b>" + nA + "</b>";
 }
 
 // =============================================================
@@ -2158,7 +2061,7 @@ function renderFire() {
     return "<div class=\"" + cls + "\">" +
       "<div>" +
         "<div class=\"fire-school-name\">" + esc(s.name) + "</div>" +
-        (info.length ? "<div class=\"fire-info-line\">" + esc(info.join(" \u00b7 ")) + "</div>" : "") +
+        (info.length ? "<div class=\"fire-info-line\">" + esc(info.join(", ")) + "</div>" : "") +
         (s.tel && !nobody ? "<div class=\"fire-tel\">\u260e\ufe0f " + esc(s.tel) + "</div>" : "") +
         (st.tempC > 0 ? "<div class=\"fire-temp-note\">\u26a0 " + st.tempC + " child" + (st.tempC !== 1 ? "ren" : "") + " currently outside</div>" : "") +
       "</div>" +
@@ -2200,7 +2103,7 @@ function buildFirePDF() {
     doc.setFontSize(16); doc.text(String(tot),185,y+9,{align:"right"});
     doc.setFont("helvetica","normal"); doc.setFontSize(8.5); doc.setTextColor(100,100,100);
     var sub=[]; if(s.principal)sub.push(s.principal); if(s.tel)sub.push(s.tel);
-    if(sub.length)doc.text(sub.join(" \u00b7 "),16,y+13.5);
+    if(sub.length)doc.text(sub.join(", "),16,y+13.5);
     if(st.tempC>0){doc.setTextColor(200,100,0);doc.setFont("helvetica","bold");doc.text("\u26a0 "+st.tempC+" child"+(st.tempC!==1?"ren":"")+" temporarily OUTSIDE",16,y+18);}
     doc.setTextColor(0); y+=rowH+1;
   });
@@ -2290,6 +2193,11 @@ function renderAdminSchools() {
       // Item 16: Chaperone names
       "<div class=\"field-group\"><label class=\"field-label\">Chaperone Names <span class=\"field-label-opt\">(optional, comma-separated)</span></label><input class=\"field-input\" data-sid=\"" + s.id + "\" data-f=\"chaperoneNames\" value=\"" + esc(s.chaperoneNames||"") + "\" placeholder=\"e.g. Jane Smith, David Jones\" style=\"padding:9px 12px;font-size:14px\"></div>" +
       "<div class=\"field-group\"><label class=\"field-label\">Arrival Time <span class=\"field-label-opt\">(optional, 24hr e.g. 14:25)</span></label><input class=\"field-input\" data-sid=\"" + s.id + "\" data-f=\"arrivalTime\" value=\"" + esc(s.arrivalTime||"") + "\" placeholder=\"e.g. 14:25\" style=\"padding:9px 12px;font-size:14px\"></div>" +
+      "<div style=\"display:grid;grid-template-columns:90px 1fr 1fr;gap:9px\">" +
+        "<div class=\"field-group\"><label class=\"field-label\">Medical <span class=\"field-label-opt\">(Yes)</span></label><input class=\"field-input\" data-sid=\"" + s.id + "\" data-f=\"medical\" value=\"" + esc(s.medical||"") + "\" style=\"padding:9px 12px;font-size:14px\"></div>" +
+        "<div class=\"field-group\"><label class=\"field-label\">Dressing room</label><input class=\"field-input\" data-sid=\"" + s.id + "\" data-f=\"dressingRoom\" value=\"" + esc(s.dressingRoom||"") + "\" style=\"padding:9px 12px;font-size:14px\"></div>" +
+        "<div class=\"field-group\"><label class=\"field-label\">Floor</label><input class=\"field-input\" data-sid=\"" + s.id + "\" data-f=\"floor\" value=\"" + esc(s.floor||"") + "\" style=\"padding:9px 12px;font-size:14px\"></div>" +
+      "</div>" +
     "</div>";
   }).join("");
 }
@@ -2439,6 +2347,9 @@ async function autoPopulateFromMasterSheet() {
       const chaperones = parseInt(row[6]) || 0;
       const chaperoneNames = row.length > 7 && row[7] ? String(row[7]).trim() : "";
       const arrivalTime = row.length > 8 && row[8] ? String(row[8]).trim() : "";
+      const medical = row.length > 9 && row[9] ? String(row[9]).trim() : "";
+      const dressingRoom = row.length > 10 && row[10] ? String(row[10]).trim() : "";
+      const floor = row.length > 11 && row[11] ? String(row[11]).trim() : "";
       
       if (!name) continue;
       
@@ -2451,7 +2362,10 @@ async function autoPopulateFromMasterSheet() {
         performers: performers || null,
         chaperones: chaperones || null,
         chaperoneNames: chaperoneNames || null,
-        arrivalTime: arrivalTime || null
+        arrivalTime: arrivalTime || null,
+        medical: medical || null,
+        dressingRoom: dressingRoom || null,
+        floor: floor || null
       });
     }
     
@@ -2608,7 +2522,7 @@ function renderReport() {
     : txLog.slice().reverse().map(function(tx){
         var dt = new Date(tx.ts);
         return "<div class=\"log-entry\">" +
-          "<div class=\"log-time\">" + dt.toLocaleDateString("en-GB",{day:"numeric",month:"short"}) + " " + dt.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}) + " \u2014 " + (tl[tx.type]||tx.type) + "</div>" +
+          "<div class=\"log-time\">" + dt.toLocaleDateString("en-GB",{day:"numeric",month:"short"}) + " " + dt.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}) + ", " + (tl[tx.type]||tx.type) + "</div>" +
           "<div class=\"log-desc\">" + esc(tx.schoolName) + "</div>" +
           "<div class=\"log-detail\">" + tx.c + " children + " + tx.a + " adults</div>" +
           (tx.signedBy ? "<div class=\"log-by\">Signed by: " + esc(tx.signedBy) + "</div>" : "") +
@@ -2803,7 +2717,7 @@ function buildPDFDoc() {
     doc.setFont("helvetica","bold"); doc.setFontSize(8.5); doc.setTextColor(90,90,90);
     doc.text(new Date(tx.ts).toLocaleString("en-GB")+"  |  "+(tl[tx.type]||tx.type),14,y); y+=5;
     doc.setFont("helvetica","normal"); doc.setTextColor(0);
-    doc.text(tx.schoolName+" \u2014 "+tx.c+" children + "+tx.a+" adults",14,y); y+=4.5;
+    doc.text(tx.schoolName+", "+tx.c+" children + "+tx.a+" adults",14,y); y+=4.5;
     if(tx.signedBy){doc.setTextColor(50,160,80);doc.setFontSize(8);doc.text("Signed by: "+tx.signedBy,14,y);y+=4.5;doc.setTextColor(0);}
     if(tx.deviceLocation){doc.setTextColor(150,150,150);doc.setFontSize(8);doc.text("Location: "+tx.deviceLocation,14,y);y+=4.5;doc.setTextColor(0);}
     if(tx.notes){doc.setTextColor(80,80,190);doc.setFontSize(7.5);var wr=doc.splitTextToSize("Note: "+tx.notes,178);doc.text(wr,14,y);y+=wr.length*4+1;doc.setTextColor(0);}
@@ -2820,6 +2734,256 @@ function dlPDF() {
 // =============================================================
 //  HELPERS
 // =============================================================
+
+// =============================================================
+//  v12  STEP BY STEP SIGN IN
+// =============================================================
+function schoolById(id) { return cfg.schools.find(function(s) { return s.id === id; }); }
+
+function namedChaps(sc) {
+  if (!sc || !sc.chaperoneNames || !String(sc.chaperoneNames).trim()) return [];
+  return String(sc.chaperoneNames).split(",").map(function(n) { return n.trim(); }).filter(function(n) { return n; });
+}
+
+function hasMedical(sc) {
+  var v = String((sc && sc.medical) || "").trim().toLowerCase();
+  return v !== "" && v !== "no" && v !== "n" && v !== "false" && v !== "0";
+}
+
+function dressingText(sc) {
+  if (!sc) return "";
+  var room = String(sc.dressingRoom || "").trim();
+  var fl = String(sc.floor || "").trim();
+  var out = room ? "Dressing room: " + room : "";
+  if (fl) {
+    var f = /floor/i.test(fl) ? fl : fl + " floor";
+    out = out ? out + ", " + f : f;
+  }
+  return out;
+}
+
+function metaHTML(sc) {
+  var t = dressingText(sc), med = hasMedical(sc);
+  if (!t && !med) return "";
+  return "<span class=\"wz-dr\">" + esc(t) + "</span>" + (med ? "<span class=\"wz-med\" title=\"Medical notes\">💊</span>" : "");
+}
+
+function wzPanels(name) {
+  document.querySelectorAll("#view-action .wz-panel").forEach(function(p) { p.style.display = (p.id === name) ? "block" : "none"; });
+  var sc = document.querySelector("#view-action .action-scroll");
+  if (sc) sc.scrollTop = 0;
+}
+
+function wzBar(mode) {
+  document.getElementById("wzBarCard").style.display = (mode === "card") ? "flex" : "none";
+  document.getElementById("wzBarMain").style.display = (mode === "main") ? "flex" : "none";
+}
+
+function wzButtons(primaryText, primaryGo, secText, secLinkish, secFn) {
+  var p = document.getElementById("confirmBtn");
+  p.textContent = primaryText;
+  p.className = "wz-primary" + (primaryGo ? " go" : "");
+  var s = document.getElementById("wzSecondary");
+  if (secText) {
+    s.style.display = "";
+    s.textContent = secText;
+    s.className = "wz-secondary" + (secLinkish ? " linkish" : "");
+    wz.sec = secFn;
+  } else {
+    s.style.display = "none";
+    wz.sec = null;
+  }
+}
+function wzSecondary() { if (wz.sec) wz.sec(); }
+
+function wzShowCard() {
+  curType = null;
+  wz.steps = []; wz.i = 0;
+  var sc = schoolById(curSid), st = states[curSid] || blank();
+  document.getElementById("wzStepLabel").innerHTML = "";
+  var html = "<div class=\"wz-bignums\"><div><b>" + st.cIn + "</b><span>children in</span></div><div><b>" + st.aIn + "</b><span>" + (st.aIn === 1 ? "adult in" : "adults in") + "</span></div></div>";
+  if ((parseInt(st.tempC) || 0) > 0 || (parseInt(st.tempA) || 0) > 0) {
+    html += "<span class=\"wz-still wz-warn\">Temp out: <b>" + (parseInt(st.tempC) || 0) + "</b> children, <b>" + (parseInt(st.tempA) || 0) + "</b> adults</span>";
+  }
+  var leftC = st.declaredC !== null ? Math.max(st.declaredC - (parseInt(st.totCIn) || 0), 0) : 0;
+  var leftA = st.declaredA !== null ? Math.max(st.declaredA - (parseInt(st.totAIn) || 0), 0) : 0;
+  var left = [];
+  if (leftC > 0) left.push(leftC + (leftC === 1 ? " child" : " children"));
+  if (leftA > 0) left.push(leftA + (leftA === 1 ? " adult" : " adults"));
+  if (left.length) html += "<span class=\"wz-still\">Still to come: " + left.join(" and ") + "</span>";
+  document.getElementById("wzCardNums").innerHTML = html;
+  document.getElementById("wzTopBack").style.display = "";
+  wzPanels("wzCard");
+  wzBar("card");
+}
+
+function wzInitNumbers() {
+  var st = states[curSid] || blank();
+  if (curType !== "in") { nC = 0; nA = 0; return; }
+  var remC = st.declaredC !== null ? Math.max(st.declaredC - (parseInt(st.totCIn) || 0), 0) : 0;
+  var remA = st.declaredA !== null ? Math.max(st.declaredA - (parseInt(st.totAIn) || 0), 0) : 0;
+  nC = remC;
+  nA = wz.hasChap ? 0 : remA;
+}
+
+function wzChapInit() {
+  var sc = schoolById(curSid), st = states[curSid] || blank();
+  var done = st.chapsIn || [];
+  var unsigned = namedChaps(sc).filter(function(n) { return done.indexOf(n) < 0; });
+  var remA = st.declaredA !== null ? Math.max(st.declaredA - (parseInt(st.totAIn) || 0), 0) : null;
+  // Pre-tick everyone when the adults still expected match the names still to come
+  var pre = (remA !== null && remA === unsigned.length);
+  chaperoneState = {};
+  unsigned.forEach(function(n) { chaperoneState[n] = {checked: pre, note: "", open: false}; });
+  extraAdults = 0; extraAdultsNote = "";
+  recalcAdultsFromChaps();
+}
+
+function wzDrawChaps() {
+  var sc = schoolById(curSid);
+  document.getElementById("chapSection").innerHTML = "<div id=\"chapList\">" + renderChaperoneList(sc) + "</div>";
+  recalcAdultsFromChaps();
+}
+
+function openChapNote(el) {
+  var name = el.dataset.chapname;
+  if (!name || !chaperoneState[name]) return;
+  chaperoneState[name].open = true;
+  wzDrawChaps();
+  var inp = document.querySelector(".wz-chapnote input[data-chapname=\"" + name.replace(/"/g, "") + "\"]");
+  if (inp) inp.focus();
+}
+
+function wzNumHint() {
+  var el = document.getElementById("wzNumHint");
+  if (!el) return;
+  var st = states[curSid] || blank();
+  var h = "";
+  if (curType === "in" && st.declaredC !== null) {
+    var leftC = st.declaredC - (parseInt(st.totCIn) || 0) - nC;
+    if (leftC > 0) h += "<span class=\"wz-still\">" + leftC + (leftC === 1 ? " child" : " children") + " still to come</span>";
+    else if (leftC < 0) h += "<span class=\"wz-still wz-warn\">" + (-leftC) + " more " + (-leftC === 1 ? "child" : "children") + " than the contingent</span>";
+    if (!wz.hasChap && st.declaredA !== null) {
+      var leftA = st.declaredA - (parseInt(st.totAIn) || 0) - nA;
+      if (leftA > 0) h += "<span class=\"wz-still\">" + leftA + (leftA === 1 ? " adult" : " adults") + " still to come</span>";
+      else if (leftA < 0) h += "<span class=\"wz-still wz-warn\">" + (-leftA) + " more " + (-leftA === 1 ? "adult" : "adults") + " than the contingent</span>";
+    }
+  }
+  el.innerHTML = h;
+}
+
+function wzFillAll() {
+  var st = states[curSid] || blank();
+  if (curType === "return") { nC = parseInt(st.tempC) || 0; nA = parseInt(st.tempA) || 0; }
+  else { nC = parseInt(st.cIn) || 0; nA = parseInt(st.aIn) || 0; }
+  document.getElementById("nC").textContent = nC;
+  document.getElementById("nA").textContent = nA;
+  wzNumHint();
+}
+
+function wzToggleEdit(id) { document.getElementById(id).classList.toggle("open"); }
+
+function wzFillSummary() {
+  var g = function(id) { return document.getElementById(id); };
+  if (!g("wzSumC")) return;
+  g("wzSumC").textContent = nC;
+  g("wzSumA").textContent = nA;
+  var by = g("txSignedBy").value.trim();
+  g("wzSumBy").textContent = by || "not entered";
+  g("wzSumStaff").textContent = activeStaffName || "not chosen";
+  g("wzSumLoc").textContent = activeDeviceLocation || "not set";
+}
+
+function wzRender() {
+  var step = wz.steps[wz.i], n = wz.steps.length;
+  var sc = schoolById(curSid), st = states[curSid] || blank();
+  var numTitle = {in: "Arriving now", out: "Leaving now", temp: "Going out for a while", "return": "Returning now"}[curType] || "How many";
+  var titles = {decl: "Today's contingent", num: numTitle, chap: "Chaperones", conf: "Check and sign in"};
+  var prefix = {"in": "", out: "Sign out. ", temp: "Temp out. ", "return": "Return. "}[curType] || "";
+  document.getElementById("wzStepLabel").innerHTML = "<span>STEP " + (wz.i + 1) + " OF " + n + "</span>  " + esc(prefix + titles[step]);
+  document.getElementById("wzTopBack").style.display = "";
+  wzBar("main");
+
+  if (step === "decl") {
+    wzPanels("wzDecl");
+    var dC = st.declaredC !== null ? st.declaredC : (parseInt(sc.performers) || 0);
+    var dA = st.declaredA !== null ? st.declaredA : (parseInt(sc.chaperones) || 0);
+    document.getElementById("declGateC").textContent = dC;
+    document.getElementById("declGateA").textContent = dA;
+    document.getElementById("declGateC").nextElementSibling.textContent = (dC === 1 ? "child" : "children");
+    document.getElementById("declGateA").nextElementSibling.textContent = (dA === 1 ? "adult" : "adults");
+    document.getElementById("declCExpected").textContent = parseInt(sc.performers) || 0;
+    document.getElementById("declAExpected").textContent = parseInt(sc.chaperones) || 0;
+    var hasRoster = sc.roster && sc.roster.length > 0;
+    document.getElementById("declRosterLink").style.display = hasRoster ? "" : "none";
+    document.getElementById("declGate").style.display = wz.adjusting ? "none" : "";
+    document.getElementById("declAdjust").style.display = wz.adjusting ? "" : "none";
+    if (wz.adjusting) {
+      wzButtons("Done", false, "Back", true, function() { wz.adjusting = false; wzRender(); });
+    } else {
+      wzButtons("Yes, correct", false, "Change contingent", false, showAdjustNumbers);
+    }
+  } else if (step === "num") {
+    wzPanels("wzNum");
+    var subs = {"in": "Who is walking in right now?", out: "Who is leaving?", temp: "Who is going out for a while?", "return": "Who is coming back?"};
+    document.getElementById("wzNumSub").textContent = subs[curType] || "";
+    document.getElementById("nC").textContent = nC;
+    document.getElementById("nA").textContent = nA;
+    document.getElementById("adultsNumGroup").style.display = (curType === "in" && wz.hasChap) ? "none" : "";
+    wzNumHint();
+    var q = "";
+    if (curType === "out" || curType === "temp") {
+      q = "<button class=\"wz-linkbtn\" onclick=\"wzFillAll()\">Everyone inside (" + st.cIn + " children, " + st.aIn + " adults)</button>";
+    } else if (curType === "return") {
+      q = "<button class=\"wz-linkbtn\" onclick=\"wzFillAll()\">Everyone who is out (" + (parseInt(st.tempC) || 0) + " children, " + (parseInt(st.tempA) || 0) + " adults)</button>";
+    }
+    document.getElementById("wzQuick").innerHTML = q;
+    document.getElementById("wzNumRoster").style.display = (curType === "in" && sc.roster && sc.roster.length > 0) ? "" : "none";
+    wzButtons("Next", false, null);
+  } else if (step === "chap") {
+    wzPanels("wzChap");
+    if (!wz.chapInit) { wzChapInit(); wz.chapInit = true; }
+    wzDrawChaps();
+    wzButtons("Chaperones done", false, null);
+  } else if (step === "conf") {
+    wzPanels("wzConf");
+    renderStaffChips();
+    renderLocationChips();
+    wzFillSummary();
+    document.getElementById("wzStaffEdit").classList.toggle("open", !activeStaffName);
+    var locNeeded = cfg.locationNames && cfg.locationNames.length > 0 && !activeDeviceLocation;
+    document.getElementById("wzLocEdit").classList.toggle("open", !!locNeeded);
+    var goText = {"in": "Sign in", out: "Sign out", temp: "Confirm temp out", "return": "Confirm return"}[curType];
+    wzButtons(goText, curType === "in", "Cancel", true, wzExit);
+  }
+}
+
+function wzNext() {
+  var step = wz.steps[wz.i];
+  if (step === "decl") {
+    if (wz.adjusting) confirmDeclaration(); else proceedWithExpected();
+    return;
+  }
+  if (step === "conf") { doConfirm(); return; }
+  if (step === "num") {
+    if (!(curType === "in" && wz.hasChap) && nC === 0 && nA === 0) { toast("Enter at least one person", "err"); return; }
+  }
+  wz.i++;
+  wzRender();
+}
+
+function wzBack() {
+  if (wz.steps.length === 0) { showView("home"); return; }
+  if (wz.steps[wz.i] === "decl" && wz.adjusting) { wz.adjusting = false; wzRender(); return; }
+  if (wz.i > 0) { wz.i--; wzRender(); return; }
+  wzExit();
+}
+
+function wzExit() {
+  curType = null;
+  if (wz.fromCard) { wzShowCard(); } else { showView("home"); }
+}
+
 function esc(s) {
   if (s == null) return "";
   return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
