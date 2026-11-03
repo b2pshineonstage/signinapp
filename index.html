@@ -402,6 +402,8 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
 .wz-edit .chip-row{gap:10px}
 .wz-panel .field-input{font-size:17px}
 .action-scroll{padding-bottom:280px}
+.wz-subnote{font-size:15px;color:var(--text-3);margin:0 0 12px;line-height:1.4}
+.wz-row span,.wz-row i{white-space:nowrap}
 .wz-others{background:var(--surface);border:1px solid var(--border-2);border-radius:18px;padding:12px 14px;margin-top:14px}
 .wz-others .wz-lbl{margin-top:2px}
 </style>
@@ -523,13 +525,6 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
       <div class="wz-center" id="wzNumRoster" style="display:none"><button class="wz-linkbtn" onclick="showRoster()">View roster</button></div>
     </div>
 
-    <!-- STEP: chaperones -->
-    <div class="wz-panel" id="wzChap">
-      <div class="wz-sub">Tap anyone who has not arrived to untick them.</div>
-      <div id="chapSection"></div>
-      <div class="wz-adultsin" id="wzAdultsIn"></div>
-    </div>
-
     <!-- STEP: check and sign in -->
     <div class="wz-panel" id="wzConf">
       <div class="wz-sum">
@@ -541,6 +536,8 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
         <div id="wzStaffEdit" class="wz-edit"><div class="chip-row" id="staffChipRow"></div></div>
         <div class="wz-row"><i>Location</i><span><b id="wzSumLoc"></b><u onclick="wzToggleEdit('wzLocEdit')">change</u></span></div>
         <div id="wzLocEdit" class="wz-edit"><div class="chip-row" id="locationChipRow"></div></div>
+        <div class="wz-row" id="wzChapRow"><i>Chaperones</i><span><b id="wzSumChap">optional</b><u onclick="wzToggleEdit('wzChapEdit')">record</u></span></div>
+        <div id="wzChapEdit" class="wz-edit"><div class="wz-subnote">Tick who is here. This is a record only and does not change the adult count.</div><div id="chapSection"></div></div>
       </div>
       <div class="wz-center"><button class="wz-linkbtn" onclick="wzToggleEdit('wzNotesBox')">Add a note</button></div>
       <div id="wzNotesBox" class="wz-edit" style="border-radius:14px">
@@ -788,7 +785,7 @@ let queue  = [];
 let stateVersion = 0;
 // Bump this string every time a new build is deployed, so the on-screen
 // tag lets you instantly confirm you're not looking at a stale cached copy.
-const BUILD_VERSION = "v12.0 \u2013 2026-11-03 16:00";
+const BUILD_VERSION = "v12.1 \u2013 2026-11-03 17:30";
 let returnToExtraChildPrompt = false;
 let pendingSignInConfirm = false;
 let editingChildIndex = null;
@@ -1704,14 +1701,18 @@ function setType(t) {
   var sc = schoolById(curSid);
   var st = states[curSid] || blank();
   chaperoneState = {}; extraAdults = 0; extraAdultsNote = "";
-  var unsigned = namedChaps(sc).filter(function(n) { return (st.chapsIn || []).indexOf(n) < 0; });
-  wz.hasChap = (t === "in" && unsigned.length > 0);
-  wz.chapInit = false;
+  // Named chaperones are an optional record only (v12.1): never part of the count.
+  if (t === "in") {
+    var done = st.chapsIn || [];
+    namedChaps(sc).forEach(function(n) {
+      if (done.indexOf(n) < 0) chaperoneState[n] = {checked: false, note: "", open: false};
+    });
+  }
+  wz.hasChap = false;
   wz.adjusting = false;
   var steps = [];
   if (t === "in" && st.declaredC === null) steps.push("decl");
   steps.push("num");
-  if (wz.hasChap) steps.push("chap");
   steps.push("conf");
   wz.steps = steps;
   wz.i = 0;
@@ -1983,15 +1984,11 @@ function toggleActivityLog() {
 // Item 16: Chaperone checklist
 function renderChaperoneList(sc) {
   var names = Object.keys(chaperoneState);
-  var html = names.map(function(name) {
+  return names.map(function(name) {
     var s = chaperoneState[name];
     var noteBit = "";
-    if (s.checked) {
-      if (s.open || s.note) {
-        noteBit = "";
-      } else {
-        noteBit = "<span class=\"nt\" data-chapname=\"" + esc(name) + "\" onclick=\"event.stopPropagation();openChapNote(this)\">note</span>";
-      }
+    if (s.checked && !(s.open || s.note)) {
+      noteBit = "<span class=\"nt\" data-chapname=\"" + esc(name) + "\" onclick=\"event.stopPropagation();openChapNote(this)\">note</span>";
     }
     var row = "<div class=\"wz-chap" + (s.checked ? " on" : "") + "\" data-chapname=\"" + esc(name) + "\" onclick=\"toggleChap(this)\">" +
       "<div class=\"box\">" + (s.checked ? "✓" : "") + "</div>" +
@@ -2001,18 +1998,6 @@ function renderChaperoneList(sc) {
     }
     return row;
   }).join("");
-  html += "<div class=\"wz-others\">" +
-    "<div class=\"wz-lbl\">Other adults (not chaperones)</div>" +
-    "<div class=\"num-wrap\">" +
-      "<button class=\"nbtn\" onclick=\"adjExtraAdults(-1)\">−</button>" +
-      "<span class=\"nval\" id=\"extraAdultsVal\">" + (extraAdults || 0) + "</span>" +
-      "<button class=\"nbtn\" onclick=\"adjExtraAdults(1)\">+</button>" +
-    "</div>" +
-    ((extraAdults || 0) > 0
-      ? "<div style=\"margin-top:10px\"><input class=\"wz-otherinput\" id=\"extraAdultsNoteInput\" placeholder=\"Who? e.g. DBS officer, side of stage only\" value=\"" + esc(extraAdultsNote) + "\" oninput=\"extraAdultsNote=this.value\"></div>"
-      : "") +
-  "</div>";
-  return html;
 }
 
 function toggleChap(el) {
@@ -2038,10 +2023,8 @@ function adjExtraAdults(d) {
 }
 
 function recalcAdultsFromChaps() {
-  var checked = Object.keys(chaperoneState).filter(function(n) { return chaperoneState[n].checked; }).length;
-  nA = checked + (extraAdults || 0);
-  var el = document.getElementById("nA"); if (el) el.textContent = nA;
-  var ai = document.getElementById("wzAdultsIn"); if (ai) ai.innerHTML = "Adults in: <b>" + nA + "</b>";
+  // v12.1: ticking chaperones is a record only and never changes the adult count
+  wzFillSummary();
 }
 
 // =============================================================
@@ -2813,6 +2796,7 @@ function wzShowCard() {
   if (left.length) html += "<span class=\"wz-still\">Still to come: " + left.join(" and ") + "</span>";
   document.getElementById("wzCardNums").innerHTML = html;
   document.getElementById("wzTopBack").style.display = "";
+  document.getElementById("aInfoLine").style.display = "";
   wzPanels("wzCard");
   wzBar("card");
 }
@@ -2820,29 +2804,17 @@ function wzShowCard() {
 function wzInitNumbers() {
   var st = states[curSid] || blank();
   if (curType !== "in") { nC = 0; nA = 0; return; }
-  var remC = st.declaredC !== null ? Math.max(st.declaredC - (parseInt(st.totCIn) || 0), 0) : 0;
-  var remA = st.declaredA !== null ? Math.max(st.declaredA - (parseInt(st.totAIn) || 0), 0) : 0;
-  nC = remC;
-  nA = wz.hasChap ? 0 : remA;
+  nC = st.declaredC !== null ? Math.max(st.declaredC - (parseInt(st.totCIn) || 0), 0) : 0;
+  nA = st.declaredA !== null ? Math.max(st.declaredA - (parseInt(st.totAIn) || 0), 0) : 0;
 }
 
-function wzChapInit() {
-  var sc = schoolById(curSid), st = states[curSid] || blank();
-  var done = st.chapsIn || [];
-  var unsigned = namedChaps(sc).filter(function(n) { return done.indexOf(n) < 0; });
-  var remA = st.declaredA !== null ? Math.max(st.declaredA - (parseInt(st.totAIn) || 0), 0) : null;
-  // Pre-tick everyone when the adults still expected match the names still to come
-  var pre = (remA !== null && remA === unsigned.length);
-  chaperoneState = {};
-  unsigned.forEach(function(n) { chaperoneState[n] = {checked: pre, note: "", open: false}; });
-  extraAdults = 0; extraAdultsNote = "";
-  recalcAdultsFromChaps();
-}
+function wzChapInit() { /* v12.1: chaperone list is built in setType and is optional */ }
 
 function wzDrawChaps() {
   var sc = schoolById(curSid);
-  document.getElementById("chapSection").innerHTML = "<div id=\"chapList\">" + renderChaperoneList(sc) + "</div>";
-  recalcAdultsFromChaps();
+  var box = document.getElementById("chapSection");
+  if (box) box.innerHTML = "<div id=\"chapList\">" + renderChaperoneList(sc) + "</div>";
+  wzFillSummary();
 }
 
 function openChapNote(el) {
@@ -2892,16 +2864,22 @@ function wzFillSummary() {
   g("wzSumBy").textContent = by || "not entered";
   g("wzSumStaff").textContent = activeStaffName || "not chosen";
   g("wzSumLoc").textContent = activeDeviceLocation || "not set";
+  var cs = g("wzSumChap");
+  if (cs) {
+    var n = Object.keys(chaperoneState).filter(function(k) { return chaperoneState[k].checked; }).length;
+    cs.textContent = n > 0 ? (n + " recorded") : "optional";
+  }
 }
 
 function wzRender() {
   var step = wz.steps[wz.i], n = wz.steps.length;
   var sc = schoolById(curSid), st = states[curSid] || blank();
-  var numTitle = {in: "Arriving now", out: "Leaving now", temp: "Going out for a while", "return": "Returning now"}[curType] || "How many";
-  var titles = {decl: "Today's contingent", num: numTitle, chap: "Chaperones", conf: "Check and sign in"};
+  var numTitle = {"in": "Count who is arriving", out: "Count who is leaving", temp: "Count who is going out", "return": "Count who is returning"}[curType] || "How many";
+  var titles = {decl: "Check the group", num: numTitle, conf: "Check and sign in"};
   var prefix = {"in": "", out: "Sign out. ", temp: "Temp out. ", "return": "Return. "}[curType] || "";
   document.getElementById("wzStepLabel").innerHTML = "<span>STEP " + (wz.i + 1) + " OF " + n + "</span>  " + esc(prefix + titles[step]);
   document.getElementById("wzTopBack").style.display = "";
+  document.getElementById("aInfoLine").style.display = "none";
   wzBar("main");
 
   if (step === "decl") {
@@ -2925,11 +2903,11 @@ function wzRender() {
     }
   } else if (step === "num") {
     wzPanels("wzNum");
-    var subs = {"in": "Who is walking in right now?", out: "Who is leaving?", temp: "Who is going out for a while?", "return": "Who is coming back?"};
+    var subs = {"in": "How many are walking in right now?", out: "How many are leaving?", temp: "How many are going out for a while?", "return": "How many are coming back?"};
     document.getElementById("wzNumSub").textContent = subs[curType] || "";
     document.getElementById("nC").textContent = nC;
     document.getElementById("nA").textContent = nA;
-    document.getElementById("adultsNumGroup").style.display = (curType === "in" && wz.hasChap) ? "none" : "";
+    document.getElementById("adultsNumGroup").style.display = "";
     wzNumHint();
     var q = "";
     if (curType === "out" || curType === "temp") {
@@ -2940,15 +2918,16 @@ function wzRender() {
     document.getElementById("wzQuick").innerHTML = q;
     document.getElementById("wzNumRoster").style.display = (curType === "in" && sc.roster && sc.roster.length > 0) ? "" : "none";
     wzButtons("Next", false, null);
-  } else if (step === "chap") {
-    wzPanels("wzChap");
-    if (!wz.chapInit) { wzChapInit(); wz.chapInit = true; }
-    wzDrawChaps();
-    wzButtons("Chaperones done", false, null);
   } else if (step === "conf") {
     wzPanels("wzConf");
+    // With only one location set up, use it without asking
+    if (!activeDeviceLocation && cfg.locationNames && cfg.locationNames.length === 1) activeDeviceLocation = cfg.locationNames[0];
     renderStaffChips();
     renderLocationChips();
+    var hasNames = (curType === "in" && Object.keys(chaperoneState).length > 0);
+    document.getElementById("wzChapRow").style.display = hasNames ? "" : "none";
+    document.getElementById("wzChapEdit").classList.remove("open");
+    if (hasNames) wzDrawChaps();
     wzFillSummary();
     document.getElementById("wzStaffEdit").classList.toggle("open", !activeStaffName);
     var locNeeded = cfg.locationNames && cfg.locationNames.length > 0 && !activeDeviceLocation;
@@ -2966,7 +2945,7 @@ function wzNext() {
   }
   if (step === "conf") { doConfirm(); return; }
   if (step === "num") {
-    if (!(curType === "in" && wz.hasChap) && nC === 0 && nA === 0) { toast("Enter at least one person", "err"); return; }
+    if (nC === 0 && nA === 0) { toast("Enter at least one person", "err"); return; }
   }
   wz.i++;
   wzRender();
