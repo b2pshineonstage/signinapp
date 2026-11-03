@@ -439,7 +439,11 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
 .wz-row.big i{font-size:18px;color:var(--text-2)}
 .wz-row.big b{font-size:36px;font-weight:800;line-height:1}
 .wz-bignums span{font-size:16px}
-.wz-chaps{margin:22px 0 10px}
+.wz-chaps{margin:20px 0 6px}
+#wzOtherRow .wz-otherinput{margin-top:2px}
+#wzNum .nbtn{height:84px}
+#wzNum .nval{font-size:58px}
+#wzNum .num-grid{gap:14px}
 .wz-chaps .wz-lbl{margin:0 0 4px}
 </style>
 </head>
@@ -556,6 +560,8 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
         </div>
       </div>
       <div id="wzNumHint"></div>
+      <div id="wzChapRow" class="wz-chaps"><div class="wz-lbl">Chaperones here</div><div class="wz-subnote">Optional. A record only, it does not change the Adults number.</div><div id="chapSection"></div></div>
+      <div id="wzOtherRow" class="wz-chaps"><div class="wz-lbl">Another adult, not a chaperone</div><div class="wz-subnote">Optional. Count them in Adults, then say who they are.</div><input class="wz-otherinput" id="txOtherAdult" placeholder="Name and role, for example DBS officer" autocorrect="off" spellcheck="false"></div>
       <div class="wz-center" id="wzQuick"></div>
       <div class="wz-center" id="wzNumRoster" style="display:none"><button class="wz-linkbtn" onclick="showRoster()">View roster</button></div>
     </div>
@@ -566,9 +572,6 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
       <div class="wz-sum">
         <div class="wz-row big"><i>Children</i><b id="wzSumC">0</b></div>
         <div class="wz-row big"><i>Adults</i><b id="wzSumA">0</b></div>
-      </div>
-      <div id="wzChapRow" class="wz-chaps"><div class="wz-lbl">Chaperones here</div><div class="wz-subnote">Optional. Tick who you can see, for the record. It does not change the adult count.</div><div id="chapSection"></div></div>
-      <div class="wz-sum">
         <div class="wz-row"><i>Signed by</i><span><b id="wzSumBy"></b><u onclick="wzToggleEdit('wzByEdit')">change</u></span></div>
         <div id="wzByEdit" class="wz-edit"><input class="field-input" id="txSignedBy" placeholder="Name of person handing over the group" oninput="wzFillSummary()"></div>
         <div class="wz-row"><i>Processed by</i><span><b id="wzSumStaff"></b><u onclick="wzToggleEdit('wzStaffEdit')">change</u></span></div>
@@ -822,7 +825,7 @@ let queue  = [];
 let stateVersion = 0;
 // Bump this string every time a new build is deployed, so the on-screen
 // tag lets you instantly confirm you're not looking at a stale cached copy.
-const BUILD_VERSION = "v12.3 \u2013 2026-11-03 15:50";
+const BUILD_VERSION = "v12.4 \u2013 2026-11-03 16:20";
 let returnToExtraChildPrompt = false;
 let pendingSignInConfirm = false;
 let editingChildIndex = null;
@@ -1738,6 +1741,7 @@ function setType(t) {
   var sc = schoolById(curSid);
   var st = states[curSid] || blank();
   chaperoneState = {}; extraAdults = 0; extraAdultsNote = "";
+  var oi = document.getElementById("txOtherAdult"); if (oi) oi.value = "";
   // Named chaperones are an optional record only (v12.1): never part of the count.
   if (t === "in") {
     var done = st.chapsIn || [];
@@ -1872,8 +1876,10 @@ async function execAction() {
       Object.keys(chaperoneState).forEach(function(n) {
         if (chaperoneState[n].checked && st.chapsIn.indexOf(n) < 0) st.chapsIn.push(n);
       });
-      if (extraAdults > 0 && extraAdultsNote && extraAdultsNote.trim()) {
-        var oa = "Other adults: " + extraAdultsNote.trim();
+      var oaEl = document.getElementById("txOtherAdult");
+      var oaTxt = oaEl ? oaEl.value.trim() : "";
+      if (oaTxt) {
+        var oa = "Other adult: " + oaTxt;
         notes = notes ? notes + ". " + oa : oa;
       }
     }
@@ -2957,6 +2963,10 @@ function wzRender() {
     }
     document.getElementById("wzQuick").innerHTML = q;
     document.getElementById("wzNumRoster").style.display = (curType === "in" && sc.roster && sc.roster.length > 0) ? "" : "none";
+    var hasNames = (curType === "in" && Object.keys(chaperoneState).length > 0);
+    document.getElementById("wzChapRow").style.display = hasNames ? "" : "none";
+    if (hasNames) wzDrawChaps();
+    document.getElementById("wzOtherRow").style.display = (curType === "in") ? "" : "none";
     wzButtons("Next", false, null);
   } else if (step === "conf") {
     wzPanels("wzConf");
@@ -2965,9 +2975,6 @@ function wzRender() {
     if (!activeDeviceLocation && cfg.locationNames && cfg.locationNames.length === 1) activeDeviceLocation = cfg.locationNames[0];
     renderStaffChips();
     renderLocationChips();
-    var hasNames = (curType === "in" && Object.keys(chaperoneState).length > 0);
-    document.getElementById("wzChapRow").style.display = hasNames ? "" : "none";
-    if (hasNames) wzDrawChaps();
     wzFillSummary();
     document.getElementById("wzStaffEdit").classList.toggle("open", !activeStaffName);
     var locNeeded = cfg.locationNames && cfg.locationNames.length > 0 && !activeDeviceLocation;
