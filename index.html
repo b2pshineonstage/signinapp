@@ -458,6 +458,9 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
 .action-scroll{padding-bottom:210px}
 }
 .wz-chaps{margin:20px 0 6px}
+#wzBarWarn:empty{display:none}
+#wzBarWarn{text-align:center;margin:0 0 2px}
+#wzBarWarn .wz-still{margin:0;font-size:18px;font-weight:600}
 .wz-lblrow{display:flex;align-items:center;gap:12px;margin-bottom:10px}
 .wz-lblrow em{font-style:normal;font-weight:500;letter-spacing:0;text-transform:none;color:var(--text-3);margin-left:6px;font-size:13px}
 .wz-i{flex:none;width:30px;height:30px;border-radius:50%;border:1.5px solid var(--text-3);background:none;color:var(--text-3);font-family:var(--font);font-size:15px;font-weight:700;font-style:italic;line-height:1;padding:0;cursor:pointer}
@@ -585,7 +588,6 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
         </div>
       </div>
       <div id="wzNumHint"></div>
-      <div id="wzAdultWarn"></div>
       <div id="wzChapRow" class="wz-chaps"><div class="wz-lbl wz-lblrow"><span>Chaperones here <em>optional</em></span><button class="wz-i" onclick="wzToggleInfo('wzChapInfo')" aria-label="More information">i</button></div><div class="wz-info" id="wzChapInfo">A record only. Ticking names does not change the Adults number.</div><div id="chapSection"></div></div>
       <div id="wzOtherRow" class="wz-chaps"><div class="wz-lbl wz-lblrow"><span>Other adult <em>optional</em></span><button class="wz-i" onclick="wzToggleInfo('wzOtherInfo')" aria-label="More information">i</button></div><div class="wz-info" id="wzOtherInfo">Someone who is not a chaperone, for example a DBS officer. Count them in Adults as well, then say who they are here. It goes in the note.</div><div id="wzOtherList"></div><div class="wz-center" style="text-align:left;margin:4px 0 0"><button class="wz-linkbtn" style="padding-left:0" onclick="addOtherAdult()">Add another adult</button></div></div>
       <div class="wz-center" id="wzQuick"></div>
@@ -628,6 +630,7 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
       <button class="wz-secondary linkish" onclick="showView('home')">Back to schools</button>
     </div>
     <div class="wz-inner" id="wzBarMain" style="display:none">
+      <div id="wzBarWarn"></div>
       <button class="wz-primary" id="confirmBtn" onclick="wzNext()">Next</button>
       <button class="wz-secondary" id="wzSecondary" onclick="wzSecondary()">Back</button>
     </div>
@@ -851,7 +854,7 @@ let queue  = [];
 let stateVersion = 0;
 // Bump this string every time a new build is deployed, so the on-screen
 // tag lets you instantly confirm you're not looking at a stale cached copy.
-const BUILD_VERSION = "v12.9 \u2013 2026-11-03 18:10";
+const BUILD_VERSION = "v12.10 \u2013 2026-11-03 18:40";
 let returnToExtraChildPrompt = false;
 let pendingSignInConfirm = false;
 let editingChildIndex = null;
@@ -2918,7 +2921,7 @@ function wzToggleInfo(id) {
 }
 
 function wzAdultCheck() {
-  var el = document.getElementById("wzAdultWarn");
+  var el = document.getElementById("wzBarWarn");
   if (!el) return;
   var html = "";
   if (curType === "in") {
@@ -3016,6 +3019,7 @@ function wzFillSummary() {
 }
 
 function wzRender() {
+  var bw = document.getElementById("wzBarWarn"); if (bw) bw.innerHTML = "";
   var step = wz.steps[wz.i], n = wz.steps.length;
   var sc = schoolById(curSid), st = states[curSid] || blank();
   var numTitle = {"in": "Count who is arriving", out: "Count who is leaving", temp: "Count who is going out", "return": "Count who is returning"}[curType] || "How many";
