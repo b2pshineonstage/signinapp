@@ -287,6 +287,7 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
 .report-table tr:last-child td{border-bottom:none}
 .td-warn{color:var(--red);font-weight:700}
 .td-ok{color:var(--green);font-weight:700}
+.td-muted{color:var(--text-3);font-weight:600}
 .log-entry{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:11px 13px;margin-bottom:7px}
 .log-time{font-size:13px;font-weight:700;color:var(--accent)}
 .log-desc{font-size:15px;font-weight:600;color:var(--text);margin-top:2px}
@@ -561,7 +562,7 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
       </div>
       <div id="wzNumHint"></div>
       <div id="wzChapRow" class="wz-chaps"><div class="wz-lbl">Chaperones here</div><div class="wz-subnote">Optional. A record only, it does not change the Adults number.</div><div id="chapSection"></div></div>
-      <div id="wzOtherRow" class="wz-chaps"><div class="wz-lbl">Another adult, not a chaperone</div><div class="wz-subnote">Optional. Count them in Adults, then say who they are.</div><input class="wz-otherinput" id="txOtherAdult" placeholder="Name and role, for example DBS officer" autocorrect="off" spellcheck="false"></div>
+      <div id="wzOtherRow" class="wz-chaps"><div class="wz-lbl">Another adult, not a chaperone</div><div class="wz-subnote">Optional. Count them in Adults, then say who they are.</div><div id="wzOtherList"></div><div class="wz-center" style="text-align:left;margin:4px 0 0"><button class="wz-linkbtn" style="padding-left:0" onclick="addOtherAdult()">Add another adult</button></div></div>
       <div class="wz-center" id="wzQuick"></div>
       <div class="wz-center" id="wzNumRoster" style="display:none"><button class="wz-linkbtn" onclick="showRoster()">View roster</button></div>
     </div>
@@ -825,7 +826,7 @@ let queue  = [];
 let stateVersion = 0;
 // Bump this string every time a new build is deployed, so the on-screen
 // tag lets you instantly confirm you're not looking at a stale cached copy.
-const BUILD_VERSION = "v12.4 \u2013 2026-11-03 16:20";
+const BUILD_VERSION = "v12.6 \u2013 2026-11-03 16:55";
 let returnToExtraChildPrompt = false;
 let pendingSignInConfirm = false;
 let editingChildIndex = null;
@@ -1741,7 +1742,7 @@ function setType(t) {
   var sc = schoolById(curSid);
   var st = states[curSid] || blank();
   chaperoneState = {}; extraAdults = 0; extraAdultsNote = "";
-  var oi = document.getElementById("txOtherAdult"); if (oi) oi.value = "";
+  wzOtherReset();
   // Named chaperones are an optional record only (v12.1): never part of the count.
   if (t === "in") {
     var done = st.chapsIn || [];
@@ -1876,10 +1877,10 @@ async function execAction() {
       Object.keys(chaperoneState).forEach(function(n) {
         if (chaperoneState[n].checked && st.chapsIn.indexOf(n) < 0) st.chapsIn.push(n);
       });
-      var oaEl = document.getElementById("txOtherAdult");
-      var oaTxt = oaEl ? oaEl.value.trim() : "";
-      if (oaTxt) {
-        var oa = "Other adult: " + oaTxt;
+      var oaList = [];
+      document.querySelectorAll("#wzOtherList input").forEach(function(i) { var v = i.value.trim(); if (v) oaList.push(v); });
+      if (oaList.length) {
+        var oa = (oaList.length === 1 ? "Other adult: " : "Other adults: ") + oaList.join("; ");
         notes = notes ? notes + ". " + oa : oa;
       }
     }
@@ -2539,7 +2540,8 @@ function renderReport() {
   } else { ov.innerHTML = ""; }
   document.getElementById("rBody").innerHTML = cfg.schools.map(function(s){
     var st=states[s.id]||blank(); var rem=st.cIn+st.aIn+st.tempC;
-    var status=rem>0?"<td class=\"td-warn\">"+rem+" still in \u26a0</td>":"<td class=\"td-ok\">\u2705 All out</td>";
+    var arrivedR=(st.totCIn>0||st.totAIn>0);
+    var status=!arrivedR&&rem===0?"<td class=\"td-muted\">Not arrived</td>":(rem>0?"<td class=\"td-warn\">"+rem+" still in \u26a0</td>":"<td class=\"td-ok\">\u2705 All out</td>");
     return "<tr><td>"+esc(s.name)+(s.town?"<br><small style=\"color:var(--text-3)\">"+esc(s.town)+"</small>":"")+"</td><td>"+st.totCIn+"C / "+st.totAIn+"A</td><td>"+st.totCOut+"C / "+st.totAOut+"A</td>"+status+"</tr>";
   }).join("");
   var tl = {in:"Sign In",out:"Sign Out",temp:"Temp Out",return:"Return",override:"Override Note",amend:"Amendment"};
@@ -2659,7 +2661,8 @@ function buildPDFDoc() {
     doc.text(String(st.totCIn),cols[1]+1.5,y+6); doc.text(String(st.totAIn),cols[2]+1.5,y+6);
     doc.text(String(st.totCOut),cols[3]+1.5,y+6); doc.text(String(st.totAOut),cols[4]+1.5,y+6);
     doc.text(String(rem),cols[5]+1.5,y+6);
-    if(rem>0){doc.setTextColor(224,85,85);doc.text("Outstanding",cols[6]+1.5,y+6);}
+    if(!(st.totCIn>0||st.totAIn>0)&&rem===0){doc.setTextColor(120,120,120);doc.text("Not arrived",cols[6]+1.5,y+6);}
+    else if(rem>0){doc.setTextColor(224,85,85);doc.text("Outstanding",cols[6]+1.5,y+6);}
     else{doc.setTextColor(62,207,142);doc.text("All out",cols[6]+1.5,y+6);}
     doc.setTextColor(0); y+=9;
   });
@@ -2852,6 +2855,24 @@ function wzInitNumbers() {
 }
 
 function wzChapInit() { /* v12.1: chaperone list is built in setType and is optional */ }
+
+function wzOtherReset() {
+  var box = document.getElementById("wzOtherList");
+  if (box) { box.innerHTML = ""; addOtherAdult(true); }
+}
+
+function addOtherAdult(noFocus) {
+  var box = document.getElementById("wzOtherList");
+  if (!box) return;
+  var inp = document.createElement("input");
+  inp.className = "wz-otherinput";
+  inp.placeholder = "Name and role, for example DBS officer";
+  inp.setAttribute("autocorrect", "off");
+  inp.setAttribute("spellcheck", "false");
+  inp.style.marginBottom = "10px";
+  box.appendChild(inp);
+  if (!noFocus) inp.focus();
+}
 
 function wzDrawChaps() {
   var sc = schoolById(curSid);
