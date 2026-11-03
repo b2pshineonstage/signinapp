@@ -859,7 +859,7 @@ let stateVersion = 0;
 // tag lets you instantly confirm you're not looking at a stale cached copy.
 function tempText(st){var c=parseInt(st.tempC)||0,a=parseInt(st.tempA)||0,p=[];if(c>0)p.push(c+(c===1?" child":" children"));if(a>0)p.push(a+(a===1?" adult":" adults"));return p.join(" and ");}
 function tempAny(st){return (parseInt(st.tempC)||0)>0||(parseInt(st.tempA)||0)>0;}
-const BUILD_VERSION = "v12.14 \u2013 2026-11-03 22:55";
+const BUILD_VERSION = "v12.15 \u2013 2026-11-03 23:25";
 let returnToExtraChildPrompt = false;
 let pendingSignInConfirm = false;
 let editingChildIndex = null;
@@ -972,7 +972,7 @@ async function gasPost(payload) {
   if (!url) return;
   setSyncDot("syncing");
   try {
-    const r = await fetchWithTimeout(url, {method:"POST", body:JSON.stringify(Object.assign({}, payload, {eventName:cfg.eventName, key:API_KEY}))});
+    const r = await fetchWithTimeout(url, {method:"POST", body:JSON.stringify(Object.assign({}, payload, {eventName:cfg.eventName, key:API_KEY}))}, 25000);
     if (!r.ok) throw new Error("HTTP " + r.status);
     const json = await r.json().catch(() => ({}));
     if (json.ok === false) throw new Error(json.error || "GAS error");
@@ -1023,21 +1023,27 @@ async function gasLoadState() {
   } catch(e) { return false; }
 }
 
+let draining = false;
 async function drainQueue() {
   const url = cfg.gasUrl || GAS_URL;
   if (!url || queue.length === 0) return;
-  const fail = [];
-  for (const item of queue) {
-    try {
-      const r = await fetchWithTimeout(url, {method:"POST", body:JSON.stringify(Object.assign({}, item, {eventName:cfg.eventName, key:API_KEY}))});
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      const json = await r.json().catch(() => ({}));
-      if (json.ok === false) throw new Error("GAS error");
-    } catch(e) { fail.push(item); }
-  }
-  const synced = queue.length - fail.length;
-  queue = fail;
-  saveQueue();
+  if (draining) return;   // one retry at a time, or the same entry gets sent twice
+  draining = true;
+  let synced = 0;
+  try {
+    const batch = queue.slice();
+    for (const item of batch) {
+      try {
+        const r = await fetchWithTimeout(url, {method:"POST", body:JSON.stringify(Object.assign({}, item, {eventName:cfg.eventName, key:API_KEY}))}, 30000);
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        const json = await r.json().catch(() => ({}));
+        if (json.ok === false) throw new Error("GAS error");
+        queue = queue.filter(function(x) { return x !== item; });
+        saveQueue();
+        synced++;
+      } catch(e) { break; }   // still no signal, keep the rest in order and try later
+    }
+  } finally { draining = false; }
   if (synced > 0) toast(synced + " offline entr" + (synced === 1 ? "y" : "ies") + " synced \u2713", "ok");
 }
 
