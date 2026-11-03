@@ -458,6 +458,8 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
 .action-scroll{padding-bottom:210px}
 }
 .wz-chaps{margin:20px 0 6px}
+#updateBar{display:none;margin:10px 12px 0;padding:14px 16px;border-radius:14px;border:2px solid var(--accent);background:var(--accent-bg);color:var(--accent);font-family:var(--font);font-size:17px;font-weight:700;text-align:center;cursor:pointer;flex-shrink:0}
+#updateBar.show{display:block}
 #wzBarWarn:empty{display:none}
 #wzBarWarn{text-align:center;margin:0 0 2px}
 #wzBarWarn .wz-still{margin:0;font-size:18px;font-weight:600}
@@ -521,6 +523,7 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
     <div class="all-out-sub">All groups have left the building. Save the final record to Drive now.</div>
     <button class="btn btn-primary btn-full" onclick="showView('report')">&#128203; View &amp; Save Final Record</button>
   </div>
+  <button id="updateBar" onclick="applyUpdate()">A newer version is ready. Tap here to update.</button>
   <div class="schools-list" id="schoolsList"></div>
   <div class="bottom-bar">
     <button class="btn btn-secondary btn-icon" onclick="showView('admin')">&#9881;&#65039;</button>
@@ -854,7 +857,7 @@ let queue  = [];
 let stateVersion = 0;
 // Bump this string every time a new build is deployed, so the on-screen
 // tag lets you instantly confirm you're not looking at a stale cached copy.
-const BUILD_VERSION = "v12.10 \u2013 2026-11-03 18:40";
+const BUILD_VERSION = "v12.11 \u2013 2026-11-03 20:30";
 let returnToExtraChildPrompt = false;
 let pendingSignInConfirm = false;
 let editingChildIndex = null;
@@ -1038,6 +1041,26 @@ async function drainQueue() {
 
 async function persist() { saveLocal(); gasSaveState(); }
 
+// Is there a newer copy of the app online than the one this phone is running?
+async function checkForUpdate() {
+  if (location.protocol !== "http:" && location.protocol !== "https:") return;
+  try {
+    var r = await fetchWithTimeout(location.pathname + "?nocache=" + Date.now(), {cache: "no-store"}, 8000);
+    if (!r.ok) return;
+    var t = await r.text();
+    var m = t.match(/const BUILD_VERSION = "([^"]+)"/);
+    if (!m) return;
+    var online = m[1];
+    try { online = JSON.parse('"' + m[1] + '"'); } catch(e) {}
+    var bar = document.getElementById("updateBar");
+    if (bar) bar.classList.toggle("show", online !== BUILD_VERSION);
+  } catch(e) {}
+}
+
+function applyUpdate() {
+  location.href = location.pathname + "?v=" + Date.now();
+}
+
 async function smartRefresh() {
   const ok = await gasLoadState();
   if (!ok && stateDirty) gasSaveState();
@@ -1145,11 +1168,14 @@ function init() {
   if (bt) bt.textContent = BUILD_VERSION;
   startApp();
   setInterval(function() { smartRefresh(); }, 5000);
+  setTimeout(checkForUpdate, 4000);
+  setInterval(checkForUpdate, 120000);
   document.addEventListener("visibilitychange", async function() {
     if (document.visibilityState !== "visible") return;
     if (visRefreshInProgress) return;
     visRefreshInProgress = true;
     try { await smartRefresh(); } finally { visRefreshInProgress = false; }
+    checkForUpdate();
   });
 }
 
