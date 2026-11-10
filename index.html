@@ -100,6 +100,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:17
 .school-card.fully-out{border-color:var(--green-bdr)}
 .school-name{font-size:17px;font-weight:600;color:var(--text);margin-bottom:3px;line-height:1.2}
 .school-town-line{font-size:12px;color:var(--text-3);margin-bottom:6px}
+.wz-fillbtn{display:block;width:100%;background:transparent;border:2px solid var(--accent);border-radius:14px;color:var(--accent);font-family:var(--font);font-size:18px;font-weight:700;padding:14px 16px;margin:4px 0 18px;cursor:pointer}
+.wz-fillbtn span{display:block;font-size:14px;font-weight:500;color:var(--text-2);margin-top:3px}
+.school-principal{font-size:13px;color:var(--text-2);margin-bottom:6px}
+.wz-principal{font-size:16px;color:var(--text-2);margin:0 0 14px}
 .stat-pills{display:flex;gap:6px;flex-wrap:wrap}
 .pill{border-radius:20px;padding:3px 11px;font-size:13px;font-weight:600}
 .pill-default{background:var(--surface-2);border:1px solid var(--border-2);color:var(--text-3)}
@@ -563,6 +567,7 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
     <!-- STEP: today's contingent (first arrival only) -->
     <div class="wz-panel" id="wzDecl">
       <div class="wz-sub" id="wzDeclSub" style="margin-bottom:6px"></div>
+      <div class="wz-principal" id="declPrincipal"></div>
       <div class="wz-subnote" style="font-size:17px;margin-bottom:16px">Registered numbers. Include anyone arriving later.</div>
       <div id="declGate">
         <div class="wz-bignums"><div><b id="declGateC">0</b><span>children</span></div><div><b id="declGateA">0</b><span>adults</span></div></div>
@@ -582,6 +587,7 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
     <!-- STEP: how many right now -->
     <div class="wz-panel" id="wzNum">
       <div class="wz-sub" id="wzNumSub"></div>
+      <div id="wzQuick"></div>
       <div class="num-grid">
         <div class="num-group"><label>Children</label>
           <div class="num-wrap"><button class="nbtn" onclick="adj('c',-1)">&#8722;</button><span class="nval" id="nC">0</span><button class="nbtn" onclick="adj('c',1)">+</button></div>
@@ -592,8 +598,7 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
       </div>
       <div id="wzNumHint"></div>
       <div id="wzChapRow" class="wz-chaps"><div class="wz-lbl wz-lblrow"><span>Chaperones here <em>optional</em></span><button class="wz-i" onclick="wzToggleInfo('wzChapInfo')" aria-label="More information">i</button></div><div class="wz-info" id="wzChapInfo">A record only. Ticking names does not change the Adults number.</div><div id="chapSection"></div></div>
-      <div id="wzOtherRow" class="wz-chaps"><div class="wz-lbl wz-lblrow"><span>Other adult <em>optional</em></span><button class="wz-i" onclick="wzToggleInfo('wzOtherInfo')" aria-label="More information">i</button></div><div class="wz-info" id="wzOtherInfo">Someone who is not a chaperone, for example a DBS officer. Count them in Adults as well, then say who they are here. It goes in the note.</div><div id="wzOtherList"></div><div class="wz-center" style="text-align:left;margin:4px 0 0"><button class="wz-linkbtn" style="padding-left:0" onclick="addOtherAdult()">Add another adult</button></div></div>
-      <div class="wz-center" id="wzQuick"></div>
+      <div id="wzOtherRow" class="wz-chaps"><div class="wz-lbl wz-lblrow"><span>Other adult <em>optional</em></span><button class="wz-i" onclick="wzToggleInfo('wzOtherInfo')" aria-label="More information">i</button></div><div class="wz-info" id="wzOtherInfo">An extra adult, for example a DBS officer or a stand-in chaperone. Count them in Adults as well, then type their name here. Tick the box if they are a chaperone. It goes in the note.</div><div id="wzOtherList"></div><div class="wz-center" style="text-align:left;margin:4px 0 0"><button class="wz-linkbtn" style="padding-left:0" onclick="addOtherAdult()">Add another adult</button></div></div>
       <div class="wz-center" id="wzNumRoster" style="display:none"><button class="wz-linkbtn" onclick="showRoster()">View roster</button></div>
     </div>
 
@@ -604,7 +609,7 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
         <div class="wz-row big"><i>Children</i><b id="wzSumC">0</b></div>
         <div class="wz-row big"><i>Adults</i><b id="wzSumA">0</b></div>
         <div class="wz-row"><i>Signed by</i><span><b id="wzSumBy"></b><u onclick="wzToggleEdit('wzByEdit')">change</u></span></div>
-        <div id="wzByEdit" class="wz-edit"><input class="field-input" id="txSignedBy" placeholder="Name of person handing over the group" oninput="wzFillSummary()"></div>
+        <div id="wzByEdit" class="wz-edit"><div id="wzByChips" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px"></div><input class="field-input" id="txSignedBy" placeholder="Name of person handing over the group" oninput="wzFillSummary()"></div>
         <div class="wz-row"><i>Processed by</i><span><b id="wzSumStaff"></b><u onclick="wzToggleEdit('wzStaffEdit')">change</u></span></div>
         <div id="wzStaffEdit" class="wz-edit"><div class="chip-row" id="staffChipRow"></div></div>
         <div class="wz-row"><i>Location</i><span><b id="wzSumLoc"></b><u onclick="wzToggleEdit('wzLocEdit')">change</u></span></div>
@@ -654,6 +659,17 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
       </div>
       <div class="num-group"><label>Adults</label>
         <div class="num-wrap"><button class="nbtn" onclick="adjAmend('a',-1)">&#8722;</button><span class="nval" id="amendA">0</span><button class="nbtn" onclick="adjAmend('a',1)">+</button></div>
+      </div>
+    </div>
+    <div id="amendExpWrap" style="display:none">
+      <div class="section-label">Expected to arrive today</div>
+      <div class="num-grid">
+        <div class="num-group"><label>Children</label>
+          <div class="num-wrap"><button class="nbtn" onclick="adjAmendExp('c',-1)">&#8722;</button><span class="nval" id="amendDC">0</span><button class="nbtn" onclick="adjAmendExp('c',1)">+</button></div>
+        </div>
+        <div class="num-group"><label>Adults</label>
+          <div class="num-wrap"><button class="nbtn" onclick="adjAmendExp('a',-1)">&#8722;</button><span class="nval" id="amendDA">0</span><button class="nbtn" onclick="adjAmendExp('a',1)">+</button></div>
+        </div>
       </div>
     </div>
     <div class="field-group">
@@ -737,6 +753,7 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
     <div class="report-ts" id="rTs"></div>
     <div id="rDriveStatus"></div>
     <div id="rOverride"></div>
+    <div id="rExtra"></div>
     <div class="section-label">Summary by School</div>
     <table class="report-table"><thead><tr><th>School</th><th>In</th><th>Out</th><th>Status</th></tr></thead><tbody id="rBody"></tbody></table>
     <div class="section-label">Sign In/Out Activity</div>
@@ -859,7 +876,7 @@ let stateVersion = 0;
 // tag lets you instantly confirm you're not looking at a stale cached copy.
 function tempText(st){var c=parseInt(st.tempC)||0,a=parseInt(st.tempA)||0,p=[];if(c>0)p.push(c+(c===1?" child":" children"));if(a>0)p.push(a+(a===1?" adult":" adults"));return p.join(" and ");}
 function tempAny(st){return (parseInt(st.tempC)||0)>0||(parseInt(st.tempA)||0)>0;}
-const BUILD_VERSION = "v12.15 \u2013 2026-11-03 23:25";
+const BUILD_VERSION = "v12.17 \u2013 2026-11-10 09:30";
 let returnToExtraChildPrompt = false;
 let pendingSignInConfirm = false;
 let editingChildIndex = null;
@@ -873,6 +890,7 @@ let activeDeviceLocation = null;
 let coTimeout = null;
 let amendC = 0, amendA = 0;
 let chaperoneState = {};  // { name: {checked:bool, note:""} }
+let amendDC = null, amendDA = null, amendExpTouched = false;
 let extraAdults = 0;      // unlisted chaperones beyond named ones
 let extraAdultsNote = "";
 var wz = {steps:[], i:0, fromCard:false, adjusting:false, chapInit:false, hasChap:false, sec:null};
@@ -1264,8 +1282,15 @@ function renderHome() {
     var expLine = arrived ? "" : "<div class=\"school-expect\">Expecting <b>" + (parseInt(s.performers) || 0) + "</b> children, <b>" + (parseInt(s.chaperones) || 0) + "</b> " + ((parseInt(s.chaperones) || 0) === 1 ? "adult" : "adults") + "</div>";
     var metaInner = metaHTML(s);
     var metaLine = metaInner ? "<div class=\"school-meta\">" + metaInner + "</div>" : "";
-    return "<div class=\"" + cls + "\" onclick=\"openAction(" + s.id + ")\"><div class=\"school-name\">" + esc(s.name) + "</div>" + townLine + expLine + "<div class=\"stat-pills\">" + pills + statusEmoji + "</div>" + metaLine + lastLine + "</div>";
+    return "<div class=\"" + cls + "\" onclick=\"openAction(" + s.id + ")\"><div class=\"school-name\">" + esc(s.name) + "</div>" + townLine + (principalText(s) ? "<div class=\"school-principal\">" + esc(principalText(s)) + "</div>" : "") + expLine + "<div class=\"stat-pills\">" + pills + statusEmoji + "</div>" + metaLine + lastLine + "</div>";
   }).join("");
+}
+
+function principalText(s) {
+  var parts = [];
+  if (s && s.principal) parts.push(s.principal);
+  if (s && s.tel) parts.push(s.tel);
+  return parts.length ? "Principal: " + parts.join(", ") : "";
 }
 
 function allSignedOut() {
@@ -1855,6 +1880,25 @@ function renderStaffChips() {
   }).join("");
 }
 
+function renderByChips() {
+  var row = document.getElementById("wzByChips");
+  if (!row) return;
+  var sc = schoolById(curSid);
+  var names = [];
+  if (sc && sc.principal) names.push(sc.principal);
+  namedChaps(sc).forEach(function(n) { if (names.indexOf(n) < 0) names.push(n); });
+  var cur = (document.getElementById("txSignedBy").value || "").trim();
+  row.innerHTML = names.map(function(name) {
+    return "<button class=\"s-chip" + (name === cur ? " active" : "") + "\" data-byname=\"" + esc(name) + "\" onclick=\"selectByChip(this.dataset.byname)\">" + esc(name) + "</button>";
+  }).join("");
+}
+
+function selectByChip(name) {
+  document.getElementById("txSignedBy").value = name;
+  renderByChips();
+  wzFillSummary();
+}
+
 function selectStaffChip(name) {
   activeStaffName = name;
   renderStaffChips();
@@ -1970,8 +2014,17 @@ async function execAction() {
       Object.keys(chaperoneState).forEach(function(n) {
         if (chaperoneState[n].checked && st.chapsIn.indexOf(n) < 0) st.chapsIn.push(n);
       });
-      var oaList = [];
-      document.querySelectorAll("#wzOtherList input").forEach(function(i) { var v = i.value.trim(); if (v) oaList.push(v); });
+      var oaList = [], scList = [];
+      document.querySelectorAll("#wzOtherList .wz-otherwrap").forEach(function(w) {
+        var v = w.querySelector("input.wz-otherinput").value.trim();
+        if (!v) return;
+        var isChap = w.querySelector("input.wz-otherchap").checked;
+        (isChap ? scList : oaList).push(v);
+      });
+      if (scList.length) {
+        var sn = (scList.length === 1 ? "Stand-in chaperone: " : "Stand-in chaperones: ") + scList.join("; ");
+        notes = notes ? notes + ". " + sn : sn;
+      }
       if (oaList.length) {
         var oa = (oaList.length === 1 ? "Other adult: " : "Other adults: ") + oaList.join("; ");
         notes = notes ? notes + ". " + oa : oa;
@@ -2039,12 +2092,29 @@ function openAmend() {
   var sc = cfg.schools.find(function(s) { return s.id === curSid; });
   amendC = st.cIn;
   amendA = st.aIn;
+  var saveBtn = document.querySelector("[onclick='doAmendConfirm()']");
+  if (saveBtn && !isWriting) saveBtn.disabled = false;
+  amendDC = st.declaredC; amendDA = st.declaredA; amendExpTouched = false;
+  var expWrap = document.getElementById("amendExpWrap");
+  if (expWrap) {
+    expWrap.style.display = (st.declaredC !== null) ? "" : "none";
+    if (st.declaredC !== null) {
+      document.getElementById("amendDC").textContent = amendDC;
+      document.getElementById("amendDA").textContent = amendDA !== null ? amendDA : 0;
+    }
+  }
   document.getElementById("amendSchoolName").textContent = sc.name;
   document.getElementById("amendCurrentCounts").textContent = "Currently recorded: " + st.cIn + " children, " + st.aIn + " adults inside";
   document.getElementById("amendC").textContent = amendC;
   document.getElementById("amendA").textContent = amendA;
   document.getElementById("amendReason").value = "";
   showView("amend");
+}
+
+function adjAmendExp(f, d) {
+  amendExpTouched = true;
+  if (f === "c") { amendDC = Math.max(0, (amendDC || 0) + d); document.getElementById("amendDC").textContent = amendDC; }
+  else           { amendDA = Math.max(0, (amendDA || 0) + d); document.getElementById("amendDA").textContent = amendDA; }
 }
 
 function adjAmend(f, d) {
@@ -2057,10 +2127,12 @@ async function doAmendConfirm() {
   var btn = document.querySelector("[onclick='doAmendConfirm()']");
   if (btn) btn.disabled = true;
   var reason = document.getElementById("amendReason").value.trim();
-  if (!reason) { toast("A reason is required for amendments", "err"); return; }
+  if (!reason) { if (btn) btn.disabled = false; toast("A reason is required for amendments", "err"); return; }
   var st = states[curSid] || blank();
   var prevC = st.cIn, prevA = st.aIn;
-  if (amendC === prevC && amendA === prevA) { toast("No change, counts are the same", "err"); return; }
+  var prevDC = st.declaredC, prevDA = st.declaredA;
+  var expChanged = amendExpTouched && st.declaredC !== null && (amendDC !== prevDC || (amendDA !== null && amendDA !== prevDA));
+  if (amendC === prevC && amendA === prevA && !expChanged) { if (btn) btn.disabled = false; toast("No change, counts are the same", "err"); return; }
   isWriting = true;
   try {
     var sc = cfg.schools.find(function(s) { return s.id === curSid; });
@@ -2069,6 +2141,13 @@ async function doAmendConfirm() {
     st.cIn = amendC; st.aIn = amendA;
     st.totCIn = Math.max(0, st.totCIn + deltaC);
     st.totAIn = Math.max(0, st.totAIn + deltaA);
+    var expNote = "";
+    if (expChanged) {
+      var pDA = prevDA !== null ? prevDA : 0, nDA = amendDA !== null ? amendDA : pDA;
+      expNote = ". Expected " + prevDC + "C/" + pDA + "A \u2192 " + amendDC + "C/" + nDA + "A";
+      st.declaredC = amendDC;
+      if (amendDA !== null) st.declaredA = amendDA;
+    }
     states[curSid] = st;
     var by = activeStaffName || "";
     var tx = {
@@ -2076,13 +2155,13 @@ async function doAmendConfirm() {
       schoolId:curSid, schoolName:sc.name,
       type:"amend", c:amendC, a:amendA,
       prevC:prevC, prevA:prevA, deltaC:deltaC, deltaA:deltaA,
-      signedBy:by, processedBy:by, notes:reason,
+      signedBy:by, processedBy:by, notes:reason + expNote,
       deviceLocation:activeDeviceLocation || ""
     };
     txLog.push(tx);
     await persist();
     gasPost({action:"log", ts:tx.ts, schoolName:sc.name, type:"amend", c:amendC, a:amendA,
-      notes:"Amended " + prevC + "C/" + prevA + "A \u2192 " + amendC + "C/" + amendA + "A, " + reason,
+      notes:((amendC === prevC && amendA === prevA) ? "Expected numbers changed, " + reason + expNote : "Amended " + prevC + "C/" + prevA + "A \u2192 " + amendC + "C/" + amendA + "A, " + reason + expNote),
       signedBy:by, processedBy:by, deviceLocation:tx.deviceLocation});
     showConfirmOverlay("amend", sc.name, amendC, amendA);
   } finally {
@@ -2631,6 +2710,15 @@ function renderReport() {
       "<div class=\"field-group\"><label class=\"field-label\">Reason <span class=\"field-label-opt\">(required)</span></label><textarea class=\"field-input\" id=\"overrideReason\" placeholder=\"e.g. 3 children from Elite Dance left with parents, confirmed with Jade Falconer at 17:42.\"></textarea></div>" +
     "</div>";
   } else { ov.innerHTML = ""; }
+  var extraRows = cfg.schools.map(function(s){
+    var st = states[s.id] || blank();
+    var reg = st.expectedC !== null ? st.expectedC : (parseInt(s.performers) || 0);
+    var came = Math.max(st.declaredC !== null ? st.declaredC : 0, parseInt(st.totCIn) || 0);
+    var ex = (reg > 0 && ((parseInt(st.totCIn) || 0) > 0 || st.declaredC !== null)) ? came - reg : 0;
+    return ex > 0 ? esc(s.name) + ": registered <b>" + reg + "</b>, came <b>" + came + "</b>, <b>" + ex + " extra</b>" : null;
+  }).filter(Boolean);
+  document.getElementById("rExtra").innerHTML = extraRows.length === 0 ? "" :
+    "<div class=\"override-box\"><div class=\"override-title\">Extra children to charge</div><div class=\"override-body\">" + extraRows.join("<br>") + "</div></div>";
   document.getElementById("rBody").innerHTML = cfg.schools.map(function(s){
     var st=states[s.id]||blank(); var rem=st.cIn+st.aIn+(parseInt(st.tempC)||0)+(parseInt(st.tempA)||0);
     var arrivedR=(st.totCIn>0||st.totAIn>0);
@@ -2695,10 +2783,13 @@ function buildCSV() {
   c += "\n\nBILLING ADJUSTMENTS\nSchool,Expected Children,Arrived Children,Expected Adults,Arrived Adults,Child Discrepancy,Adult Discrepancy,Status\n";
   cfg.schools.forEach(function(s){
     var st=states[s.id]||blank();
-    if (st.expectedC !== null || st.expectedA !== null) {
-      var expC = st.expectedC || 0;
-      var expA = st.expectedA || 0;
-      var arrC = st.declaredC !== null ? st.declaredC : expC;
+    var hasExp = st.expectedC !== null || st.expectedA !== null;
+    var regC = parseInt(s.performers) || 0;
+    var cameIn = (parseInt(st.totCIn) || 0) > 0 || st.declaredC !== null;
+    if (hasExp || (cameIn && regC > 0)) {
+      var expC = hasExp ? (st.expectedC || 0) : regC;
+      var expA = hasExp ? (st.expectedA || 0) : (parseInt(s.chaperones) || 0);
+      var arrC = Math.max(st.declaredC !== null ? st.declaredC : expC, parseInt(st.totCIn) || 0);
       var arrA = st.declaredA !== null ? st.declaredA : expA;
       var discC = arrC - expC;
       var discA = arrA - expA;
@@ -2764,10 +2855,13 @@ function buildPDFDoc() {
   var hasAdjustments = false;
   cfg.schools.forEach(function(s){
     var st=states[s.id]||blank();
-    if (st.expectedC !== null || st.expectedA !== null) {
-      var expC = st.expectedC || 0;
-      var expA = st.expectedA || 0;
-      var arrC = st.declaredC !== null ? st.declaredC : expC;
+    var hasExp = st.expectedC !== null || st.expectedA !== null;
+    var regC = parseInt(s.performers) || 0;
+    var cameIn = (parseInt(st.totCIn) || 0) > 0 || st.declaredC !== null;
+    if (hasExp || (cameIn && regC > 0)) {
+      var expC = hasExp ? (st.expectedC || 0) : regC;
+      var expA = hasExp ? (st.expectedA || 0) : (parseInt(s.chaperones) || 0);
+      var arrC = Math.max(st.declaredC !== null ? st.declaredC : expC, parseInt(st.totCIn) || 0);
       var arrA = st.declaredA !== null ? st.declaredA : expA;
       var discC = arrC - expC;
       var discA = arrA - expA;
@@ -2961,7 +3055,7 @@ function wzAdultCheck() {
   if (curType === "in") {
     var ticked = Object.keys(chaperoneState).filter(function(k) { return chaperoneState[k].checked; }).length;
     var others = 0;
-    document.querySelectorAll("#wzOtherList input").forEach(function(i) { if (i.value.trim()) others++; });
+    document.querySelectorAll("#wzOtherList input.wz-otherinput").forEach(function(i) { if (i.value.trim()) others++; });
     var named = ticked + others;
     if (named > (parseInt(nA) || 0)) {
       html = "<span class=\"wz-still wz-warn\">\u26a0\ufe0f <b>" + named + "</b> " + (named === 1 ? "adult" : "adults") + " named, but Adults says <b>" + (parseInt(nA) || 0) + "</b>.</span>";
@@ -2978,14 +3072,27 @@ function wzOtherReset() {
 function addOtherAdult(noFocus) {
   var box = document.getElementById("wzOtherList");
   if (!box) return;
+  var wrap = document.createElement("div");
+  wrap.className = "wz-otherwrap";
+  wrap.style.marginBottom = "12px";
   var inp = document.createElement("input");
   inp.className = "wz-otherinput";
-  inp.placeholder = "Name and role, for example DBS officer";
+  inp.placeholder = "Name, and role if not a chaperone";
   inp.setAttribute("autocorrect", "off");
   inp.setAttribute("spellcheck", "false");
-  inp.style.marginBottom = "10px";
+  inp.style.marginBottom = "8px";
   inp.oninput = wzAdultCheck;
-  box.appendChild(inp);
+  var lab = document.createElement("label");
+  lab.style.cssText = "display:flex;align-items:center;gap:10px;font-size:16px;color:var(--text-2)";
+  var cb = document.createElement("input");
+  cb.type = "checkbox";
+  cb.className = "wz-otherchap";
+  cb.style.cssText = "width:24px;height:24px";
+  lab.appendChild(cb);
+  lab.appendChild(document.createTextNode("Chaperone (with badge)"));
+  wrap.appendChild(inp);
+  wrap.appendChild(lab);
+  box.appendChild(wrap);
   if (!noFocus) inp.focus();
 }
 
@@ -3043,6 +3150,7 @@ function wzFillSummary() {
   g("wzSumA").textContent = nA;
   var by = g("txSignedBy").value.trim();
   g("wzSumBy").textContent = by || "not entered";
+  renderByChips();
   g("wzSumStaff").textContent = activeStaffName || "not chosen";
   g("wzSumLoc").textContent = activeDeviceLocation || "not set";
   var cs = g("wzSumChap");
@@ -3071,6 +3179,7 @@ function wzRender() {
     wzPanels("wzDecl");
     var dC = st.declaredC !== null ? st.declaredC : (parseInt(sc.performers) || 0);
     var dA = st.declaredA !== null ? st.declaredA : (parseInt(sc.chaperones) || 0);
+    document.getElementById("declPrincipal").textContent = principalText(sc);
     document.getElementById("declGateC").textContent = dC;
     document.getElementById("declGateA").textContent = dA;
     document.getElementById("declGateC").nextElementSibling.textContent = (dC === 1 ? "child" : "children");
@@ -3097,9 +3206,10 @@ function wzRender() {
     wzNumHint();
     var q = "";
     if (curType === "out" || curType === "temp") {
-      q = "<button class=\"wz-linkbtn\" onclick=\"wzFillAll()\">Everyone inside (" + st.cIn + " children, " + st.aIn + " adults)</button>";
+      q = "<button class=\"wz-fillbtn\" onclick=\"wzFillAll()\">" + (curType === "out" ? "Everyone is leaving" : "Everyone is going out") + "<span>Fills in " + st.cIn + " " + (st.cIn === 1 ? "child" : "children") + ", " + st.aIn + " " + (st.aIn === 1 ? "adult" : "adults") + "</span></button>";
     } else if (curType === "return") {
-      q = "<button class=\"wz-linkbtn\" onclick=\"wzFillAll()\">Everyone who is out (" + (parseInt(st.tempC) || 0) + " children, " + (parseInt(st.tempA) || 0) + " adults)</button>";
+      var rc = parseInt(st.tempC) || 0, ra = parseInt(st.tempA) || 0;
+      q = "<button class=\"wz-fillbtn\" onclick=\"wzFillAll()\">Everyone is back<span>Fills in " + rc + " " + (rc === 1 ? "child" : "children") + ", " + ra + " " + (ra === 1 ? "adult" : "adults") + "</span></button>";
     }
     document.getElementById("wzQuick").innerHTML = q;
     document.getElementById("wzNumRoster").style.display = (curType === "in" && sc.roster && sc.roster.length > 0) ? "" : "none";
@@ -3115,6 +3225,7 @@ function wzRender() {
     if (!activeDeviceLocation && cfg.locationNames && cfg.locationNames.length === 1) activeDeviceLocation = cfg.locationNames[0];
     renderStaffChips();
     renderLocationChips();
+    renderByChips();
     wzFillSummary();
     document.getElementById("wzStaffEdit").classList.toggle("open", !activeStaffName);
     var locNeeded = cfg.locationNames && cfg.locationNames.length > 0 && !activeDeviceLocation;
@@ -3176,7 +3287,9 @@ function toast(msg, type) {
 function adjustBottomBarsForKeyboard() {
   if (!window.visualViewport) return;
   var vv = window.visualViewport;
-  var offset = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+  var ae = document.activeElement;
+  var typing = !!ae && (ae.tagName === "INPUT" || ae.tagName === "TEXTAREA") && ae.type !== "checkbox" && ae.offsetParent !== null;
+  var offset = typing ? Math.max(0, window.innerHeight - vv.height - vv.offsetTop) : 0;
   document.querySelectorAll(".bottom-bar").forEach(function(bar) {
     bar.style.bottom = offset > 1 ? offset + "px" : "";
   });
@@ -3185,6 +3298,8 @@ if (window.visualViewport) {
   window.visualViewport.addEventListener("resize", adjustBottomBarsForKeyboard);
   window.visualViewport.addEventListener("scroll", adjustBottomBarsForKeyboard);
 }
+document.addEventListener("focusin", function() { setTimeout(adjustBottomBarsForKeyboard, 50); });
+document.addEventListener("focusout", function() { setTimeout(adjustBottomBarsForKeyboard, 50); });
 
 init();
 
