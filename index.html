@@ -493,6 +493,13 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
 #wzNum .nval{font-size:58px}
 #wzNum .num-grid{gap:14px}
 .wz-chaps .wz-lbl{margin:0 0 4px}
+.am-room{font-size:16px;color:var(--text-2);line-height:1.35}
+.am-room b{color:var(--text);font-weight:600}
+.am-pr{font-size:14px;color:var(--text-3);margin-top:2px}
+#wzDecl .wz-sub{font-size:20px;margin:14px 0 12px;padding-top:14px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.wz-i{flex-shrink:0;width:30px;height:30px;border-radius:50%;border:1.5px solid var(--border-2);background:none;color:var(--text-3);font-size:15px;font-weight:700;font-style:italic;font-family:Georgia,serif;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+#declNote{font-size:15px;color:var(--text-3);margin:-4px 0 12px;line-height:1.4}
+#wzDecl .wz-bignums{margin:0 0 6px;padding:20px 12px 16px}
 </style>
 </head>
 <body>
@@ -581,9 +588,8 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
 
     <!-- STEP: today's contingent (first arrival only) -->
     <div class="wz-panel" id="wzDecl">
-      <div class="wz-sub" id="wzDeclSub" style="margin-bottom:6px"></div>
-      <div class="wz-principal" id="declPrincipal"></div>
-      <div class="wz-subnote" style="font-size:17px;margin-bottom:16px">Registered numbers. Include anyone arriving later.</div>
+      <div class="wz-sub" id="wzDeclSubRow" style="margin-bottom:6px"><span id="wzDeclSub"></span><button class="wz-i" type="button" onclick="toggleDeclNote()" aria-label="More info">i</button></div>
+      <div id="declNote" style="display:none">These are the registered numbers. Include anyone arriving later.</div>
       <div id="declGate">
         <div class="wz-bignums"><div><b id="declGateC">0</b><span>children</span></div><div><b id="declGateA">0</b><span>adults</span></div></div>
         <div class="wz-center" id="declRosterLink"><button class="wz-linkbtn" onclick="showRoster()">View roster</button></div>
@@ -891,7 +897,7 @@ let stateVersion = 0;
 // tag lets you instantly confirm you're not looking at a stale cached copy.
 function tempText(st){var c=parseInt(st.tempC)||0,a=parseInt(st.tempA)||0,p=[];if(c>0)p.push(c+(c===1?" child":" children"));if(a>0)p.push(a+(a===1?" adult":" adults"));return p.join(" and ");}
 function tempAny(st){return (parseInt(st.tempC)||0)>0||(parseInt(st.tempA)||0)>0;}
-const BUILD_VERSION = "v12.18 \u2013 2026-11-10 11:45";
+const BUILD_VERSION = "v12.19 \u2013 2026-11-11 08:40";
 let returnToExtraChildPrompt = false;
 let pendingSignInConfirm = false;
 let editingChildIndex = null;
@@ -1598,10 +1604,8 @@ function openAction(id) {
   document.getElementById("aName").textContent = sc.name;
   var infoParts = [];
   if (sc.town)      infoParts.push(sc.town);
-  if (sc.principal) infoParts.push(sc.principal);
-  if (sc.tel)       infoParts.push(sc.tel);
   document.getElementById("aInfoLine").textContent = infoParts.join(", ");
-  document.getElementById("aMeta").innerHTML = metaHTML(sc);
+  document.getElementById("aMeta").innerHTML = actionMetaHTML(sc);
   document.getElementById("aStatLine").innerHTML = renderStatLine(sc, st);
   document.getElementById("discrepDetails").style.display = "none";
   document.getElementById("viewRosterBtn").style.display = (sc.roster && sc.roster.length > 0) ? "" : "none";
@@ -3002,6 +3006,23 @@ function dressingText(sc) {
   return out;
 }
 
+function actionMetaHTML(sc) {
+  if (!sc) return "";
+  var room = String(sc.dressingRoom || "").trim(), fl = String(sc.floor || "").trim();
+  var flTxt = fl ? (/floor/i.test(fl) ? fl : fl + " floor") : "";
+  var roomLine = (room || flTxt) ? "<div class=\"am-room\">" + (room ? "<b>" + esc(room) + "</b>" : "") + (room && flTxt ? ", " : "") + esc(flTxt) + "</div>" : "";
+  var pr = [sc.principal, sc.tel].filter(function(x) { return x; }).join(", ");
+  var prLine = pr ? "<div class=\"am-pr\">" + esc(pr) + "</div>" : "";
+  var med = hasMedical(sc) ? "<span class=\"wz-med\" title=\"Medical notes\">💊</span>" : "";
+  if (!roomLine && !prLine && !med) return "";
+  return "<div class=\"am-l\">" + roomLine + prLine + "</div>" + med;
+}
+
+function toggleDeclNote() {
+  var n = document.getElementById("declNote");
+  if (n) n.style.display = (n.style.display === "none") ? "" : "none";
+}
+
 function metaHTML(sc) {
   var t = dressingText(sc), med = hasMedical(sc);
   if (!t && !med) return "";
@@ -3203,7 +3224,7 @@ function wzRender() {
     wzPanels("wzDecl");
     var dC = st.declaredC !== null ? st.declaredC : (parseInt(sc.performers) || 0);
     var dA = st.declaredA !== null ? st.declaredA : (parseInt(sc.chaperones) || 0);
-    document.getElementById("declPrincipal").textContent = principalText(sc);
+    document.getElementById("declNote").style.display = "none";
     document.getElementById("declGateC").textContent = dC;
     document.getElementById("declGateA").textContent = dA;
     document.getElementById("declGateC").nextElementSibling.textContent = (dC === 1 ? "child" : "children");
