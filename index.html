@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Shine on Stage Sign In/Out</title>
 <link rel="icon" type="image/png" href="favicon.png">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -102,6 +102,21 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:17
 .school-town-line{font-size:12px;color:var(--text-3);margin-bottom:6px}
 .wz-fillbtn{display:block;width:100%;background:transparent;border:2px solid var(--accent);border-radius:14px;color:var(--accent);font-family:var(--font);font-size:18px;font-weight:700;padding:14px 16px;margin:4px 0 18px;cursor:pointer}
 .wz-fillbtn span{display:block;font-size:14px;font-weight:500;color:var(--text-2);margin-top:3px}
+.nc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.nc-name{font-size:18px;font-weight:700;color:var(--text);line-height:1.25}
+.nc-town{font-size:13px;color:var(--text-3);margin-top:2px}
+.nc-chip{flex-shrink:0;min-width:64px;background:var(--accent-bg);border:1.5px solid var(--accent-bdr);color:var(--accent);font-weight:700;font-size:16px;border-radius:10px;padding:4px 10px;line-height:1.2;text-align:center}
+.nc-chip small{display:block;font-size:10px;font-weight:600;letter-spacing:.08em;opacity:.85}
+.nc-chip.solid{background:var(--accent);color:#111;border-color:var(--accent)}
+.school-card.next{border-color:var(--accent)}
+.nc-pills{margin:10px 0 10px;align-items:center}
+.nc-pills .pill{font-size:14px;padding:4px 12px}
+.nc-foot{border-top:1px solid var(--border-2);padding-top:9px;font-size:13px;color:var(--text-3);display:flex;justify-content:space-between;align-items:center;gap:10px}
+.nc-foot .l{min-width:0}
+.nc-foot .l div+div{margin-top:2px}
+.nc-foot .med{font-size:22px;flex-shrink:0}
+.nc-dr{color:var(--text-2);font-size:14px}
+.nc-dr b{color:var(--text);font-weight:600}
 .school-principal{font-size:13px;color:var(--text-2);margin-bottom:6px}
 .wz-principal{font-size:16px;color:var(--text-2);margin:0 0 14px}
 .stat-pills{display:flex;gap:6px;flex-wrap:wrap}
@@ -876,7 +891,7 @@ let stateVersion = 0;
 // tag lets you instantly confirm you're not looking at a stale cached copy.
 function tempText(st){var c=parseInt(st.tempC)||0,a=parseInt(st.tempA)||0,p=[];if(c>0)p.push(c+(c===1?" child":" children"));if(a>0)p.push(a+(a===1?" adult":" adults"));return p.join(" and ");}
 function tempAny(st){return (parseInt(st.tempC)||0)>0||(parseInt(st.tempA)||0)>0;}
-const BUILD_VERSION = "v12.17 \u2013 2026-11-10 09:30";
+const BUILD_VERSION = "v12.18 \u2013 2026-11-10 11:45";
 let returnToExtraChildPrompt = false;
 let pendingSignInConfirm = false;
 let editingChildIndex = null;
@@ -1233,56 +1248,65 @@ function renderHome() {
   document.getElementById("tA").textContent = totA;
   document.getElementById("tT").textContent = totC + totA;
   allSignedOut() ? document.getElementById("allOutBanner").classList.add("show") : document.getElementById("allOutBanner").classList.remove("show");
+  var nextId = null;
+  cfg.schools.forEach(function(s) { var st = states[s.id] || blank(); if (nextId === null && !(st.totCIn > 0 || st.totAIn > 0)) nextId = s.id; });
   document.getElementById("schoolsList").innerHTML = cfg.schools.map(function(s) {
     var st = states[s.id] || blank();
     var arrived = st.totCIn > 0 || st.totAIn > 0;
     var allOut  = arrived && st.cIn === 0 && st.aIn === 0 && !tempAny(st);
     var cls = "school-card" + (allOut ? " fully-out" : (st.cIn > 0 || st.aIn > 0 ? " has-people" : ""));
-    var townLine = s.town ? "<div class=\"school-town-line\">" + esc(s.town) + "</div>" : "";
+    var isNext = !arrived && s.id === nextId;
+    if (isNext) cls += " next";
+    var chip = "";
+    if (!arrived && (isNext || s.arrivalTime)) {
+      chip = "<div class=\"nc-chip" + (isNext ? " solid" : "") + "\">" + (isNext ? "<small>NEXT</small>" : "") + esc(s.arrivalTime || "") + "</div>";
+    }
     var pills = "";
     if (!arrived) {
-      pills = "<span class=\"pill pill-default\">Not yet arrived</span>";
-      if (s.arrivalTime) pills += "<span class=\"pill pill-default\" style=\"color:var(--text-3)\">⏱ " + esc(s.arrivalTime) + "</span>";
+      var pC = parseInt(s.performers) || 0, pA = parseInt(s.chaperones) || 0;
+      pills = "<span class=\"pill pill-default\">" + pC + " " + (pC === 1 ? "child" : "children") + "</span>" +
+              "<span class=\"pill pill-default\">" + pA + " " + (pA === 1 ? "adult" : "adults") + "</span>";
     }
-    else {
-      pills += "<span class=\"pill pill-gold\"><b>" + st.cIn + "</b> children in</span>";
-      pills += "<span class=\"pill pill-gold\"><b>" + st.aIn + "</b> " + (st.aIn === 1 ? "adult" : "adults") + " in</span>";
-      if (tempAny(st)) pills += "<span class=\"pill pill-amber\">" + tempText(st) + " temp out</span>";
-      if (allOut) pills += "<span class=\"pill pill-green\">\u2713 All signed out</span>";
-    }
-    
-    // Status emoji - are we waiting for people?
-    var statusEmoji = "";
-    if (arrived && !allOut) {
-      var expectedC = st.declaredC !== null ? st.declaredC : (s.performers || 0);
-      var expectedA = st.declaredA !== null ? st.declaredA : (s.chaperones || 0);
-      var expectedTotal = expectedC + expectedA;
-      var currentTotal = st.cIn + st.aIn;
-      if (currentTotal >= expectedTotal && expectedTotal > 0) {
-        statusEmoji = "<span class=\"status-emoji\">✅</span>";
-      } else if (currentTotal > 0) {
-        statusEmoji = "<span class=\"status-emoji\">⏳</span>";
-      }
-    }
-    
-    // Item 7: Last action
+
+    // Last action
     var lastTx = null;
     for (var i = txLog.length - 1; i >= 0; i--) {
       if (txLog[i].schoolId === s.id) { lastTx = txLog[i]; break; }
     }
+    var tStr = lastTx ? new Date(lastTx.ts).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}) : "";
+
+    if (arrived && allOut) {
+      pills = "<span class=\"pill pill-green\">✓ All signed out" + (tStr ? " " + tStr : "") + "</span>";
+    } else if (arrived) {
+      pills += "<span class=\"pill pill-gold\"><b>" + st.cIn + "</b> children in</span>";
+      pills += "<span class=\"pill pill-gold\"><b>" + st.aIn + "</b> " + (st.aIn === 1 ? "adult" : "adults") + " in</span>";
+      if (tempAny(st)) pills += "<span class=\"pill pill-amber\">" + tempText(st) + " temp out</span>";
+      // Status emoji - are we waiting for people?
+      var expectedC = st.declaredC !== null ? st.declaredC : (s.performers || 0);
+      var expectedA = st.declaredA !== null ? st.declaredA : (s.chaperones || 0);
+      var expectedTotal = expectedC + expectedA;
+      var currentTotal = st.cIn + st.aIn;
+      if (currentTotal >= expectedTotal && expectedTotal > 0) pills += "<span class=\"status-emoji\">✅</span>";
+      else if (currentTotal > 0) pills += "<span class=\"status-emoji\">⏳</span>";
+    }
+
     var lastLine = "";
-    if (lastTx) {
-      var dt = new Date(lastTx.ts);
-      var tStr = dt.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
+    if (lastTx && !allOut) {
       var labels = {in:"Signed in",out:"Signed out",temp:"Temp out",return:"Return",amend:"Amended"};
       var summary = (labels[lastTx.type]||lastTx.type);
       if (lastTx.type !== "amend") summary += ": " + lastTx.c + "C + " + lastTx.a + "A";
-      lastLine = "<div class=\"last-action-line\">Last: " + summary + ", " + tStr + "</div>";
+      lastLine = "<div>Last: " + esc(summary) + ", " + tStr + "</div>";
     }
-    var expLine = arrived ? "" : "<div class=\"school-expect\">Expecting <b>" + (parseInt(s.performers) || 0) + "</b> children, <b>" + (parseInt(s.chaperones) || 0) + "</b> " + ((parseInt(s.chaperones) || 0) === 1 ? "adult" : "adults") + "</div>";
-    var metaInner = metaHTML(s);
-    var metaLine = metaInner ? "<div class=\"school-meta\">" + metaInner + "</div>" : "";
-    return "<div class=\"" + cls + "\" onclick=\"openAction(" + s.id + ")\"><div class=\"school-name\">" + esc(s.name) + "</div>" + townLine + (principalText(s) ? "<div class=\"school-principal\">" + esc(principalText(s)) + "</div>" : "") + expLine + "<div class=\"stat-pills\">" + pills + statusEmoji + "</div>" + metaLine + lastLine + "</div>";
+    var room = String(s.dressingRoom || "").trim(), fl = String(s.floor || "").trim();
+    var flTxt = fl ? (/floor/i.test(fl) ? fl : fl + " floor") : "";
+    var drLine = (room || flTxt) ? "<div class=\"nc-dr\">" + (room ? "<b>" + esc(room) + "</b>" : "") + (room && flTxt ? ", " : "") + esc(flTxt) + "</div>" : "";
+    var pr = [s.principal, s.tel].filter(function(x) { return x; }).join(", ");
+    var prLine = pr ? "<div>" + esc(pr) + "</div>" : "";
+    var med = hasMedical(s) ? "<span class=\"med\" title=\"Medical notes\">💊</span>" : "";
+    var foot = (drLine || prLine || lastLine || med) ? "<div class=\"nc-foot\"><div class=\"l\">" + drLine + prLine + lastLine + "</div>" + med + "</div>" : "";
+    return "<div class=\"" + cls + "\" onclick=\"openAction(" + s.id + ")\">" +
+      "<div class=\"nc-top\"><div><div class=\"nc-name\">" + esc(s.name) + "</div>" + (s.town ? "<div class=\"nc-town\">" + esc(s.town) + "</div>" : "") + "</div>" + chip + "</div>" +
+      "<div class=\"stat-pills nc-pills\">" + pills + "</div>" + foot + "</div>";
   }).join("");
 }
 
