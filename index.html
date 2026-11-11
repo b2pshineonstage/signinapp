@@ -497,9 +497,13 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
 .am-room b{color:var(--text);font-weight:600}
 .am-pr{font-size:14px;color:var(--text-3);margin-top:2px}
 #wzDecl .wz-sub{font-size:20px;margin:14px 0 12px;padding-top:14px;display:flex;align-items:center;justify-content:space-between;gap:10px}
-.wz-i{flex-shrink:0;width:30px;height:30px;border-radius:50%;border:1.5px solid var(--border-2);background:none;color:var(--text-3);font-size:15px;font-weight:700;font-style:italic;font-family:Georgia,serif;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
 #declNote{font-size:15px;color:var(--text-3);margin:-4px 0 12px;line-height:1.4}
 #wzDecl .wz-bignums{margin:0 0 6px;padding:20px 12px 16px}
+.kw{color:var(--accent)}
+.wz-otherlab{display:flex;align-items:center;gap:12px;font-size:17px;color:var(--text-2);padding:2px 0;cursor:pointer}
+.wz-otherchap{appearance:none;-webkit-appearance:none;width:30px;height:30px;border:2.5px solid #5a5a68;border-radius:8px;margin:0;flex:none;display:grid;place-content:center;background:none;cursor:pointer}
+.wz-otherchap:checked{background:var(--green);border-color:var(--green)}
+.wz-otherchap:checked::after{content:"\2713";color:#04210f;font-weight:800;font-size:18px;line-height:1}
 </style>
 </head>
 <body>
@@ -619,7 +623,7 @@ textarea.field-input{resize:none;min-height:65px;font-size:14px;line-height:1.5}
       </div>
       <div id="wzNumHint"></div>
       <div id="wzChapRow" class="wz-chaps"><div class="wz-lbl wz-lblrow"><span>Chaperones here <em>optional</em></span><button class="wz-i" onclick="wzToggleInfo('wzChapInfo')" aria-label="More information">i</button></div><div class="wz-info" id="wzChapInfo">A record only. Ticking names does not change the Adults number.</div><div id="chapSection"></div></div>
-      <div id="wzOtherRow" class="wz-chaps"><div class="wz-lbl wz-lblrow"><span>Other adult <em>optional</em></span><button class="wz-i" onclick="wzToggleInfo('wzOtherInfo')" aria-label="More information">i</button></div><div class="wz-info" id="wzOtherInfo">An extra adult, for example a DBS officer or a stand-in chaperone. Count them in Adults as well, then type their name here. Tick the box if they are a chaperone. It goes in the note.</div><div id="wzOtherList"></div><div class="wz-center" style="text-align:left;margin:4px 0 0"><button class="wz-linkbtn" style="padding-left:0" onclick="addOtherAdult()">Add another adult</button></div></div>
+      <div id="wzOtherRow" class="wz-chaps"><div class="wz-lbl wz-lblrow"><span>Other adult <em>optional</em></span><button class="wz-i" onclick="wzToggleInfo('wzOtherInfo')" aria-label="More information">i</button></div><div class="wz-info" id="wzOtherInfo">An extra adult, for example a DBS officer or a stand-in chaperone. Count them in Adults as well, then type their name here. Tick the box if they are a chaperone. It goes in the note.</div><div id="wzOtherList"></div><div class="wz-center" style="text-align:left;margin:4px 0 0"><button class="wz-linkbtn" style="padding-left:0" onclick="addOtherAdult()">+ Add another adult</button></div></div>
       <div class="wz-center" id="wzNumRoster" style="display:none"><button class="wz-linkbtn" onclick="showRoster()">View roster</button></div>
     </div>
 
@@ -897,7 +901,7 @@ let stateVersion = 0;
 // tag lets you instantly confirm you're not looking at a stale cached copy.
 function tempText(st){var c=parseInt(st.tempC)||0,a=parseInt(st.tempA)||0,p=[];if(c>0)p.push(c+(c===1?" child":" children"));if(a>0)p.push(a+(a===1?" adult":" adults"));return p.join(" and ");}
 function tempAny(st){return (parseInt(st.tempC)||0)>0||(parseInt(st.tempA)||0)>0;}
-const BUILD_VERSION = "v12.19 \u2013 2026-11-11 08:40";
+const BUILD_VERSION = "v12.20 \u2013 2026-11-11 09:00";
 let returnToExtraChildPrompt = false;
 let pendingSignInConfirm = false;
 let editingChildIndex = null;
@@ -3128,11 +3132,10 @@ function addOtherAdult(noFocus) {
   inp.style.marginBottom = "8px";
   inp.oninput = wzAdultCheck;
   var lab = document.createElement("label");
-  lab.style.cssText = "display:flex;align-items:center;gap:10px;font-size:16px;color:var(--text-2)";
+  lab.className = "wz-otherlab";
   var cb = document.createElement("input");
   cb.type = "checkbox";
   cb.className = "wz-otherchap";
-  cb.style.cssText = "width:24px;height:24px";
   lab.appendChild(cb);
   lab.appendChild(document.createTextNode("Chaperone (with badge)"));
   wrap.appendChild(inp);
@@ -3233,7 +3236,7 @@ function wzRender() {
     document.getElementById("declAExpected").textContent = parseInt(sc.chaperones) || 0;
     var hasRoster = sc.roster && sc.roster.length > 0;
     document.getElementById("declRosterLink").style.display = hasRoster ? "" : "none";
-    document.getElementById("wzDeclSub").textContent = wz.adjusting ? "How many will be at the theatre today?" : "Will this many be at the theatre today?";
+    document.getElementById("wzDeclSub").innerHTML = wz.adjusting ? "How many will be <span class=\"kw\">at the theatre today</span>?" : "Will <span class=\"kw\">this many</span> be at the theatre today?";
     document.getElementById("declGate").style.display = wz.adjusting ? "none" : "";
     document.getElementById("declAdjust").style.display = wz.adjusting ? "" : "none";
     if (wz.adjusting) {
@@ -3243,8 +3246,8 @@ function wzRender() {
     }
   } else if (step === "num") {
     wzPanels("wzNum");
-    var subs = {"in": "How many are walking in right now?", out: "How many are leaving?", temp: "How many are going out for a while?", "return": "How many are coming back?"};
-    document.getElementById("wzNumSub").textContent = subs[curType] || "";
+    var subs = {"in": "How many are <span class=\"kw\">walking in</span> right now?", out: "How many are <span class=\"kw\">leaving</span>?", temp: "How many are <span class=\"kw\">going out</span> for a while?", "return": "How many are <span class=\"kw\">coming back</span>?"};
+    document.getElementById("wzNumSub").innerHTML = subs[curType] || "";
     document.getElementById("nC").textContent = nC;
     document.getElementById("nA").textContent = nA;
     document.getElementById("adultsNumGroup").style.display = "";
